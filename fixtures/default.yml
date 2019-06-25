@@ -1,0 +1,10 @@
+---
+version: 1
+server:
+  port: 1234
+  host: localhost
+db:
+  user: ""
+  pass: ""
+  uri: "mongdb://localhos:27017/db"
+secret: ""
