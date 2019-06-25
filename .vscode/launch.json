@@ -15,7 +15,8 @@
       "args": [
         "-dir", "configs",
         "*.y*"
-      ]
+      ],
+      "preLaunchTask": "generate"
     }
   ]
 }
