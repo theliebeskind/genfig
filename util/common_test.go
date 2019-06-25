@@ -139,3 +139,74 @@ func TestCleanDir(t *testing.T) {
 		})
 	}
 }
+
+func Test_ParseString(t *testing.T) {
+	tests := []struct {
+		name string
+		s    string
+		want interface{}
+	}{
+		{"empty", "", ""},
+		{"int", "1", int64(1)},
+		{"negative int", "-999", int64(-999)},
+		{"bool true", "true", true},
+		{"bool false", "false", false},
+		{"int array", "[1,2,3]", []interface{}{1, 2, 3}},
+		{"string array", "[a,b,c]", []interface{}{"a", "b", "c"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := util.ParseString(tt.s)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func Test_ParseStringArray(t *testing.T) {
+	tests := []struct {
+		name   string
+		s      string
+		want   []interface{}
+		wantOk bool
+	}{
+		{"empty data", "", nil, false},
+		{"not array", "a,b", nil, false},
+		{"invalid array", "[a,sä#.,,]", nil, false},
+		{"empty array", "[]", []interface{}{}, true},
+		{"ints", "[1,2,3]", []interface{}{1, 2, 3}, true},
+		{"floats", "[1.1,2.2,3.3]", []interface{}{1.1, 2.2, 3.3}, true},
+		{"bools", "[true, false, true]", []interface{}{true, false, true}, true},
+		{"strings", `["a", "b", "c"]`, []interface{}{"a", "b", "c"}, true},
+		{"strings w/o \"", `[a, b,c]`, []interface{}{"a", "b", "c"}, true},
+		{"mixed", "[true, 1, 2.2, \"s\"]", []interface{}{true, 1, 2.2, "s"}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, ok := util.ParseArrayString(tt.s)
+			if tt.wantOk {
+				require.True(t, ok)
+			} else {
+				require.False(t, ok)
+			}
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func Test_Reverse(t *testing.T) {
+	tests := []struct {
+		name string
+		in   []string
+		want []string
+	}{
+		{"empty", []string{}, []string{}},
+		{"even", []string{"a", "b", "c", "d"}, []string{"d", "c", "b", "a"}},
+		{"odd", []string{"a", "b", "c"}, []string{"c", "b", "a"}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			util.ReverseStrings(tt.in)
+			assert.Equal(t, tt.want, tt.in)
+		})
+	}
+}

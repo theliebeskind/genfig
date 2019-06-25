@@ -1,12 +1,15 @@
 package util
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 
 	zglob "github.com/mattn/go-zglob"
+	yaml "gopkg.in/yaml.v2"
 )
 
 // ResolveGlobs resolves globs and returns all found files unique
@@ -66,4 +69,47 @@ func CleanDir(name string) error {
 		}
 	}
 	return nil
+}
+
+// ReverseStrings reverses an
+func ReverseStrings(ss []string) {
+	for i := len(ss)/2 - 1; i >= 0; i-- {
+		opp := len(ss) - 1 - i
+		ss[i], ss[opp] = ss[opp], ss[i]
+	}
+}
+
+// ParseString into an interface
+func ParseString(s string) interface{} {
+	if iv, err := strconv.ParseInt(s, 10, 0); err == nil {
+		return iv
+	} else if bv, err := strconv.ParseBool(s); err == nil {
+		return bv
+	} else if ia, ok := ParseArrayString(s); ok {
+		return ia
+	} else {
+		return s
+	}
+}
+
+// ParseArrayString parses a string representing an array
+func ParseArrayString(s string) ([]interface{}, bool) {
+	if !strings.HasPrefix(s, "[") || !strings.HasSuffix(s, "]") {
+		return nil, false
+	}
+	r := []interface{}{}
+	if err := yaml.Unmarshal([]byte(s), &r); err != nil {
+		return nil, false
+	}
+	return r, true
+}
+
+// RecoverError recovers errors
+func RecoverError(r interface{}) error {
+	switch r.(type) {
+	case error:
+		return r.(error)
+	default:
+		return fmt.Errorf("%v", r)
+	}
 }
