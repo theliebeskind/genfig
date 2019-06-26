@@ -2,16 +2,11 @@ package strategies
 
 import (
 	"errors"
-	"regexp"
 	"strings"
 
 	mergo "github.com/imdario/mergo"
 	dotenv "github.com/joho/godotenv"
 	"github.com/theliebeskind/genfig/util"
-)
-
-var (
-	arrayRe = regexp.MustCompile("")
 )
 
 // DotenvStrategy parses yaml and json files
