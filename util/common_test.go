@@ -210,3 +210,61 @@ func Test_Reverse(t *testing.T) {
 		})
 	}
 }
+
+func Test_DetectSliceTypeString(t *testing.T) {
+	tests := []struct {
+		name  string
+		slice []interface{}
+		want  string
+	}{
+		{"empty", []interface{}{}, "[]interface {}"},
+		{"ints", []interface{}{1, 2, 3}, "[]int"},
+		{"bools", []interface{}{true, false, false}, "[]bool"},
+		{"string", []interface{}{"a", "b", ""}, "[]string"},
+		{"mixed", []interface{}{"a", 1, false}, "[]interface {}"},
+		{"structs", []interface{}{struct{ a int }{}}, "[]struct { a int }"},
+		{"maps", []interface{}{map[string]interface{}{}}, "[]map[string]interface {}"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := util.DetectSliceTypeString(tt.slice)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func Test_IsInterfaceSlice(t *testing.T) {
+	tests := []struct {
+		name string
+		in   interface{}
+		want bool
+	}{
+		{"no", "nope", false},
+		{"also no", struct{}{}, false},
+		{"yes", []interface{}{}, true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, util.IsInterfaceSlice(tt.in))
+		})
+	}
+}
+
+func Test_Make64(t *testing.T) {
+	tests := []struct {
+		name string
+		want string
+	}{
+		{"int", "int64"},
+		{"uint", "uint64"},
+		{"float", "float64"},
+		{"[]float", "[]float64"},
+		{"map[string]int", "map[string]int64"},
+		{"string", "string"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, util.Make64(tt.name))
+		})
+	}
+}
