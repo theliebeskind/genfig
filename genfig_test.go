@@ -32,8 +32,8 @@ func TestGenerate(t *testing.T) {
 		}
 		return v
 	}, []string{}).([]string)
-	goFiles = append(goFiles, "config.schema.go")+
-	
+	goFiles = append(goFiles, "schema.go")
+
 	duplicateConfigFiles := []string{"../local.yml", "../local.yml"}
 
 	type args struct {
@@ -101,7 +101,7 @@ func Test_parseFilename(t *testing.T) {
 	}
 }
 
-func Test_createDefaultSchema(t *testing.T) {
+func Test_writeSchema(t *testing.T) {
 	tests := []struct {
 		name     string
 		config   strategies.ParsingResult
@@ -112,18 +112,59 @@ func Test_createDefaultSchema(t *testing.T) {
 		{"simple string", strategies.ParsingResult{"a": "b"}, []string{"A string"}, false},
 		{"simple int", strategies.ParsingResult{"a": int64(1)}, []string{"A int64"}, false},
 		{"simple bool", strategies.ParsingResult{"a": true}, []string{"A bool"}, false},
-		{"single interface array", strategies.ParsingResult{"a": []interface{}{}}, []string{"A []interface {}"}, false},
-		{"single int array", strategies.ParsingResult{"a": []int{1, 2, 3}}, []string{"A []int"}, false},
+		{"int array", strategies.ParsingResult{"a": []int{1, 2, 3}}, []string{"A []int"}, false},
+		{"empy interface array", strategies.ParsingResult{"a": []interface{}{}}, []string{"A []interface {}"}, false},
+		{"mixed interface array", strategies.ParsingResult{"a": []interface{}{1, ""}}, []string{"A []interface {}"}, false},
+		{"int interface array", strategies.ParsingResult{"a": []interface{}{1, 2}}, []string{"A []int"}, false},
+		{"string interface array", strategies.ParsingResult{"a": []interface{}{"a", "b"}}, []string{"A []string"}, false},
 		{"map", strategies.ParsingResult{"a": map[string]interface{}{"b": 1}}, []string{"A struct {", "B int"}, false},
 		{"map of map", strategies.ParsingResult{"a": map[string]interface{}{"b": map[string]interface{}{"c": 1}}}, []string{"A struct {", "B struct {", "C int"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := createDefaultSchema(tt.config)
+			s := &strings.Builder{}
+			err := writeSchema(tt.config, s)
 			if tt.wantErr {
 				require.Error(t, err)
 				return
 			}
+			got := s.String()
+			require.NoError(t, err)
+			for _, c := range tt.contains {
+				assert.Contains(t, got, c)
+			}
+		})
+	}
+}
+
+func Test_writeConfig(t *testing.T) {
+	tests := []struct {
+		name     string
+		config   strategies.ParsingResult
+		contains []string
+		wantErr  bool
+	}{
+		{"empty", strategies.ParsingResult{}, []string{}, false},
+		{"simple string", strategies.ParsingResult{"a": "b"}, []string{"A string"}, false},
+		{"simple int", strategies.ParsingResult{"a": int64(1)}, []string{"A int64"}, false},
+		{"simple bool", strategies.ParsingResult{"a": true}, []string{"A bool"}, false},
+		{"int array", strategies.ParsingResult{"a": []int{1, 2, 3}}, []string{"A []int"}, false},
+		{"empy interface array", strategies.ParsingResult{"a": []interface{}{}}, []string{"A []interface {}"}, false},
+		{"mixed interface array", strategies.ParsingResult{"a": []interface{}{1, ""}}, []string{"A []interface {}"}, false},
+		{"int interface array", strategies.ParsingResult{"a": []interface{}{1, 2}}, []string{"A []int"}, false},
+		{"string interface array", strategies.ParsingResult{"a": []interface{}{"a", "b"}}, []string{"A []string"}, false},
+		{"map", strategies.ParsingResult{"a": map[string]interface{}{"b": 1}}, []string{"A struct {", "B int"}, false},
+		{"map of map", strategies.ParsingResult{"a": map[string]interface{}{"b": map[string]interface{}{"c": 1}}}, []string{"A struct {", "B struct {", "C int"}, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := &strings.Builder{}
+			err := writeConfig(tt.config, "test", s)
+			if tt.wantErr {
+				require.Error(t, err)
+				return
+			}
+			got := s.String()
 			require.NoError(t, err)
 			for _, c := range tt.contains {
 				assert.Contains(t, got, c)
