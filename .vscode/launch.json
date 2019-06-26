@@ -11,10 +11,10 @@
       "mode": "auto",
       "program": "${workspaceFolder}/cmd/main.go",
       "env": {},
-      "cwd": "${workspaceFolder}/fixtures",
       "args": [
-        "-dir", "configs",
-        "*.y*"
+        "-dir", "config",
+        "${workspaceFolder}/fixtures/default.yml",
+        "${workspaceFolder}/fixtures/.env.local"
       ],
       "preLaunchTask": "generate"
     }
