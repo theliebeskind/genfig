@@ -5,21 +5,25 @@ package genfig
 import (
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 
+	"github.com/theliebeskind/genfig/templates"
+
 	"github.com/theliebeskind/genfig/util"
 
 	"github.com/theliebeskind/genfig/strategies"
-	"github.com/theliebeskind/genfig/templates"
 )
 
 const (
 	defaultConfName       = "default"
-	defaultSchemaFilename = "config.schema.go"
+	defaultSchemaFilename = "schema.go"
+	defaultPackage        = "config"
+	defaultCmd            = "genfig"
 )
 
 var (
@@ -81,7 +85,10 @@ func Generate(files []string, dir string) ([]string, error) {
 		return nil, err
 	}
 
-	if err := writeSchema(envs[defaultConfName], filepath.Join(dir, defaultSchemaFilename)); err != nil {
+	schemaFileName := filepath.Join(dir, defaultSchemaFilename)
+	if f, err := os.Create(schemaFileName); err != nil {
+		return nil, err
+	} else if err := writeSchema(envs[defaultConfName], f); err != nil {
 		return nil, err
 	}
 
@@ -90,12 +97,15 @@ func Generate(files []string, dir string) ([]string, error) {
 	for env, data := range envs {
 		out := env + ".go"
 		path := filepath.Join(dir, out)
-		if err := writeConfig(data, path); err != nil {
+		if f, err := os.Create(path); err != nil {
+			return nil, err
+		} else if err := writeConfig(data, env, f); err != nil {
 			return nil, err
 		}
 		gofiles[i] = path
 		i++
 	}
+	gofiles = append(gofiles, schemaFileName)
 	return gofiles, nil
 }
 
@@ -107,28 +117,32 @@ func parseFile(f string, s strategies.ParsingStrategy) (strategies.ParsingResult
 	return s.Parse(data)
 }
 
-func createDefaultSchema(config strategies.ParsingResult) (s string, err error) {
+func writeSchema(c strategies.ParsingResult, to io.Writer) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = util.RecoverError(r)
 			return
 		}
 	}()
-	s = templates.Schema(config)
+
+	templates.WriteHeader(to, defaultPackage, defaultCmd)
+	templates.WriteSchema(to, c)
+
 	return
 }
 
-func writeSchema(c strategies.ParsingResult, to string) error {
-	s, err := createDefaultSchema(c)
-	if err != nil {
-		return err
-	}
-	return ioutil.WriteFile(to, []byte(s), 0777)
-}
+func writeConfig(c strategies.ParsingResult, env string, to io.Writer) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = util.RecoverError(r)
+			return
+		}
+	}()
 
-func writeConfig(d strategies.ParsingResult, to string) error {
-	data := []byte{}
-	return ioutil.WriteFile(to, data, 0777)
+	templates.WriteHeader(to, defaultPackage, defaultCmd)
+	templates.WriteConfig(to, env, c)
+
+	return
 }
 
 func parseFilename(f string) (string, string) {
