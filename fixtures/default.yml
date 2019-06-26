@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 0.1.0
 server:
   port: 1234
   host: localhost
@@ -7,4 +7,10 @@ db:
   user: ""
   pass: ""
   uri: "mongdb://localhos:27017/db"
-secret: ""
+secrets:
+  - ""
+randomizer:
+  threshold: 0.75
+apis:
+  google:
+    uri: google.com
