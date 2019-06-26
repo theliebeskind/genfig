@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -112,4 +113,38 @@ func RecoverError(r interface{}) error {
 	default:
 		return fmt.Errorf("%v", r)
 	}
+}
+
+// DetectSliceTypeString returns the actual type of an slice of interfaces
+func DetectSliceTypeString(slice []interface{}) string {
+	iface := "[]interface {}"
+	if len(slice) == 0 {
+		return iface
+	}
+	var typ reflect.Type
+	for _, s := range slice {
+		t := reflect.TypeOf(s)
+		if typ == nil {
+			typ = t
+			continue
+		}
+		if t != typ {
+			return iface
+		}
+	}
+	return "[]" + typ.String()
+}
+
+// IsInterfaceSlice checks if a given interface is actually a slice of interfaces
+func IsInterfaceSlice(i interface{}) (is bool) {
+	_, is = i.([]interface{})
+	return
+}
+
+// Make64 adds '64' to 'int', 'uint' and 'float'
+func Make64(s string) string {
+	if strings.HasSuffix(s, "int") || strings.HasSuffix(s, "uint") || strings.HasSuffix(s, "float") {
+		return s + "64"
+	}
+	return s
 }
