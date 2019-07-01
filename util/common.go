@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"unsafe"
 
 	zglob "github.com/mattn/go-zglob"
 	yaml "gopkg.in/yaml.v2"
@@ -147,4 +148,22 @@ func Make64(s string) string {
 		return s + "64"
 	}
 	return s
+}
+
+// B is an unsafe string to bytes
+func B(s string) []byte {
+	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	bh := reflect.SliceHeader{
+		Data: sh.Data,
+		Len:  sh.Len,
+		Cap:  sh.Len,
+	}
+	return *(*[]byte)(unsafe.Pointer(&bh))
+}
+
+// NoopWriter is a writer that does nothing
+type NoopWriter struct{}
+
+func (NoopWriter) Write(b []byte) (int, error) {
+	return len(b), nil
 }
