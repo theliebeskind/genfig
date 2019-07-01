@@ -11,13 +11,13 @@ type TomlStrategy struct {
 }
 
 // Parse of TomlStrategy parses yaml and json files into Parsing result
-func (s *TomlStrategy) Parse(data []byte) (ParsingResult, error) {
+func (s *TomlStrategy) Parse(data []byte) (map[string]interface{}, error) {
 	if len(data) == 0 {
 		return nil, errors.New("Empty data")
 	}
-	r := ParsingResult{}
+	r := map[string]interface{}{}
 
-	_, err := toml.Decode(string(data), &r)
+	err := toml.Unmarshal(data, &r)
 	if err != nil {
 		return nil, err
 	}

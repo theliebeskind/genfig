@@ -14,7 +14,7 @@ type DotenvStrategy struct {
 }
 
 // Parse of DotenvStrategy parses yaml and json files into Parsing result
-func (s *DotenvStrategy) Parse(data []byte) (ParsingResult, error) {
+func (s *DotenvStrategy) Parse(data []byte) (map[string]interface{}, error) {
 	if len(data) == 0 {
 		return nil, errors.New("Empty data")
 	}
@@ -24,7 +24,7 @@ func (s *DotenvStrategy) Parse(data []byte) (ParsingResult, error) {
 		return nil, err
 	}
 
-	r := ParsingResult{}
+	r := map[string]interface{}{}
 	for k, v := range envs {
 		keys := strings.Split(strings.ToLower(k), "_")
 		util.ReverseStrings(keys)
