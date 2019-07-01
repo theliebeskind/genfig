@@ -15,7 +15,7 @@ var (
 	origArgs = os.Args
 )
 
-func Test_innerMain(t *testing.T) {
+func Test_exec(t *testing.T) {
 	dir := "out"
 
 	tests := []struct {
@@ -34,9 +34,9 @@ func Test_innerMain(t *testing.T) {
 			args := append(origArgs[:1], tt.args...)
 			os.Args = args
 			if tt.shouldPanic {
-				require.Panics(t, innerMain)
+				require.Panics(t, exec)
 			} else {
-				require.NotPanics(t, innerMain)
+				require.NotPanics(t, exec)
 			}
 			os.Args = origArgs
 			os.RemoveAll(dir)
