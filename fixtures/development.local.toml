@@ -1,0 +1,6 @@
+[server]
+port = 8080
+host = "localhost"
+
+[db]
+uri = "mongdb://localhost:27017/${project}"

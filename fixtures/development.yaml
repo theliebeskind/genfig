@@ -1,5 +1,5 @@
 ---
-version: 1
+version: "1"
 server:
   port: 1234
   host: dev.mydomain.com
