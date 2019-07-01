@@ -12,3 +12,4 @@
 *.out
 
 cmd/config
+fixtures/**/*.go
