@@ -1,62 +1,86 @@
-// Package genfig proveds the genfig methods
-//go:generate qtc
 package genfig
 
 import (
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 
-	"github.com/theliebeskind/genfig/templates"
-
-	"github.com/theliebeskind/genfig/util"
-
 	"github.com/theliebeskind/genfig/strategies"
+	"github.com/theliebeskind/genfig/util"
 )
 
 const (
-	defaultConfName       = "default"
-	defaultSchemaFilename = "schema.go"
+	defaultEnvName        = "default"
+	defaultSchemaFilename = "genfig_schema.go"
+	defaulGenfigFilename  = "genfig.go"
 	defaultPackage        = "config"
 	defaultCmd            = "genfig"
+	defaultIndent         = "  "
+	defaultNewline        = "\n"
+)
+
+const (
+	maxLevel = 5
 )
 
 var (
 	ymlStrategy    = strategies.YamlStrategy{}
 	tomlStrategy   = strategies.TomlStrategy{}
 	dotenvStrategy = strategies.DotenvStrategy{}
+
+	nl = defaultNewline
 )
 
 var (
-	allowedExtensions = []string{"yml", "yaml", "json", "toml"}
+	allowedExtensions = []string{"\\.yml", "\\.yaml", "\\.json", "\\.toml"}
+	allowedPrefixes   = []string{"\\.env"}
 	strategiesMap     = map[string]strategies.ParsingStrategy{
 		"yml":    &ymlStrategy,
 		"json":   &ymlStrategy,
 		"toml":   &tomlStrategy,
 		"dotenv": &dotenvStrategy,
 	}
-	envRe = regexp.MustCompile(`(\.env\.([\w\.]+))|(([\w\.]+)\.(` + strings.Join(allowedExtensions, "|") + `))`)
+	envReStr = `((?:` + strings.Join(allowedPrefixes, "|") + `)\.([\w\.]+))|(([\w\.]+)(` + strings.Join(allowedExtensions, "|") + `))`
+	envRe    = regexp.MustCompile(envReStr)
 )
 
+// Schema defines the schema
+type Schema struct {
+	IsStruct bool
+	Content  string
+}
+
+// SchemaMap aliases as string-map of bytes
+type SchemaMap map[string]Schema
+
+// Params for the Generate func as struct,
+// empty values are default values, so can be passed empty
+type Params struct {
+	Dir        string
+	DefaultEnv string
+	MergeFiles bool
+}
+
 // Generate generates the go config files
-func Generate(files []string, dir string) ([]string, error) {
+func Generate(files []string, params Params) ([]string, error) {
+	var err error
 	if len(files) == 0 {
 		return nil, errors.New("No files to generate from")
 	}
 
-	envs := make(map[string]strategies.ParsingResult)
+	envs := make(map[string]map[string]interface{})
+	fileMap := make(map[string]string)
 
 	for _, f := range files {
 		if _, err := os.Stat(f); err != nil {
 			return nil, err
 		}
 
-		env, typ := parseFilename(f)
+		env, typ := parseFilename(filepath.Base(f))
 		if env == "" {
 			continue
 		}
@@ -64,42 +88,77 @@ func Generate(files []string, dir string) ([]string, error) {
 			continue
 		}
 		if _, exists := envs[env]; exists {
-			return nil, fmt.Errorf("Environment '%s' already exists", env)
+			return nil, fmt.Errorf("Environment '%s' does already exist", env)
 		}
 		var err error
 		envs[env], err = parseFile(f, strategiesMap[typ])
 		if err != nil {
 			return nil, err
 		}
+		fileMap[env] = f
 	}
 
 	if len(envs) == 0 {
 		return nil, errors.New("No suitable config files found")
 	}
 
-	if _, hasDefault := envs[defaultConfName]; !hasDefault {
+	if params.DefaultEnv == "" {
+		params.DefaultEnv = defaultEnvName
+	}
+
+	var defaultEnv map[string]interface{}
+	var hasDefault bool
+	if defaultEnv, hasDefault = envs[params.DefaultEnv]; !hasDefault {
 		return nil, errors.New("Missing default config")
 	}
 
-	if err := os.MkdirAll(dir, 0777); dir != "" && err != nil {
+	if err := os.MkdirAll(params.Dir, 0777); params.Dir != "" && err != nil {
 		return nil, err
 	}
 
-	schemaFileName := filepath.Join(dir, defaultSchemaFilename)
+	var schema SchemaMap
+	schemaFileName := filepath.Join(params.Dir, defaultSchemaFilename)
+	source := fmt.Sprintf("%s (schema built from '%s')", defaultCmd, filepath.Base(fileMap[params.DefaultEnv]))
 	if f, err := os.Create(schemaFileName); err != nil {
 		return nil, err
-	} else if err := writeSchema(envs[defaultConfName], f); err != nil {
+	} else if err = writeHeader(f, defaultPackage, source); err != nil {
+		return nil, err
+	} else if schema, err = writeAndReturnSchema(f, defaultEnv); err != nil {
 		return nil, err
 	}
 
 	gofiles := make([]string, len(envs))
 	i := 0
 	for env, data := range envs {
+		if env == params.DefaultEnv {
+			continue
+		}
 		out := env + ".go"
-		path := filepath.Join(dir, out)
+		path := filepath.Join(params.Dir, out)
+		source := fmt.Sprintf("%s (config built from '%s')", defaultCmd, filepath.Base(fileMap[env]))
+		name := strings.ReplaceAll(strings.Title(strings.ReplaceAll(env, "_", ".")), ".", "")
+
+		// Check of schema of this config does conform the the global schema
+		// If is has additional fields or fields with different schema themselves,
+		// it fails
+		var configSchema SchemaMap
+		if configSchema, err = writeAndReturnSchema(util.NoopWriter{}, data); err != nil {
+			return nil, err
+		}
+		for k, s := range configSchema {
+			if s.IsStruct {
+				continue
+			}
+			if _, exists := schema[k]; !exists || s.Content != schema[k].Content {
+				return nil, fmt.Errorf("%s has at leas one non-conformant field: '%s': %s != '%s'", fileMap[env], k, s.Content, schema[k].Content)
+			}
+		}
+
 		if f, err := os.Create(path); err != nil {
 			return nil, err
-		} else if err := writeConfig(data, env, f); err != nil {
+		} else if err := writeHeader(f, defaultPackage, source); err != nil {
+			return nil, err
+		} else if err := writeConfig(f, schema, data, name); err != nil {
 			return nil, err
 		}
 		gofiles[i] = path
@@ -109,40 +168,12 @@ func Generate(files []string, dir string) ([]string, error) {
 	return gofiles, nil
 }
 
-func parseFile(f string, s strategies.ParsingStrategy) (strategies.ParsingResult, error) {
+func parseFile(f string, s strategies.ParsingStrategy) (map[string]interface{}, error) {
 	data, err := ioutil.ReadFile(f)
 	if err != nil {
 		return nil, err
 	}
 	return s.Parse(data)
-}
-
-func writeSchema(c strategies.ParsingResult, to io.Writer) (err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			err = util.RecoverError(r)
-			return
-		}
-	}()
-
-	templates.WriteHeader(to, defaultPackage, defaultCmd)
-	templates.WriteSchema(to, c)
-
-	return
-}
-
-func writeConfig(c strategies.ParsingResult, env string, to io.Writer) (err error) {
-	defer func() {
-		if r := recover(); r != nil {
-			err = util.RecoverError(r)
-			return
-		}
-	}()
-
-	templates.WriteHeader(to, defaultPackage, defaultCmd)
-	templates.WriteConfig(to, env, c)
-
-	return
 }
 
 func parseFilename(f string) (string, string) {
@@ -153,7 +184,7 @@ func parseFilename(f string) (string, string) {
 	typ = typ[1:]
 	if typ == "yaml" {
 		typ = "yml"
-	} else if strings.HasPrefix(filepath.Base(f), ".env") {
+	} else if strings.HasPrefix(f, ".env") {
 		typ = "dotenv"
 	}
 
