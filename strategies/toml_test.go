@@ -25,7 +25,7 @@ const (
 )
 
 var (
-	complexTomlResult = ParsingResult{"a": "b", "c": map[string]interface{}{"d": int64(1), "e": int64(2)}, "f": []interface{}{"2", "3", "g"}}
+	complexTomlResult = map[string]interface{}{"a": "b", "c": map[string]interface{}{"d": int64(1), "e": int64(2)}, "f": []interface{}{"2", "3", "g"}}
 )
 
 func Test_Toml(t *testing.T) {
@@ -35,7 +35,7 @@ func Test_Toml(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    ParsingResult
+		want    map[string]interface{}
 		wantErr bool
 	}{
 		{"empty data", args{}, nil, true},

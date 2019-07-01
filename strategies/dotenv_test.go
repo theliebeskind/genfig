@@ -19,7 +19,7 @@ F=[2,"3","g"]
 )
 
 var (
-	complexDotenvResult = ParsingResult{"a": "b", "c": map[string]interface{}{"d": int64(1), "e": int64(2)}, "f": []interface{}{2, "3", "g"}}
+	complexDotenvResult = map[string]interface{}{"a": "b", "c": map[string]interface{}{"d": int64(1), "e": int64(2)}, "f": []interface{}{2, "3", "g"}}
 )
 
 func Test_Dotenv(t *testing.T) {
@@ -29,7 +29,7 @@ func Test_Dotenv(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    ParsingResult
+		want    map[string]interface{}
 		wantErr bool
 	}{
 		{"empty data", args{}, nil, true},

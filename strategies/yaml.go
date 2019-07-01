@@ -3,7 +3,7 @@ package strategies
 import (
 	"errors"
 
-	yaml "gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // YamlStrategy parses yaml and json files
@@ -11,11 +11,11 @@ type YamlStrategy struct {
 }
 
 // Parse of YamlStrategy parses yaml and json files into Parsing result
-func (s *YamlStrategy) Parse(data []byte) (ParsingResult, error) {
+func (s *YamlStrategy) Parse(data []byte) (map[string]interface{}, error) {
 	if len(data) == 0 {
 		return nil, errors.New("Empty data")
 	}
-	r := ParsingResult{}
+	r := map[string]interface{}{}
 
 	err := yaml.Unmarshal(data, r)
 	if err != nil {
