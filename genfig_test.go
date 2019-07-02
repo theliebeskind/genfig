@@ -40,6 +40,7 @@ func Test_Generate(t *testing.T) {
 		return v
 	}, []string{}).([]string)
 	goFiles = append(goFiles, defaultSchemaFilename)
+	goFiles = append(goFiles, defaultEnvsFilename)
 
 	type args struct {
 		files []string
@@ -128,9 +129,9 @@ func Test_writeSchema(t *testing.T) {
 		{"simple int", map[string]interface{}{"a": 1}, []string{"A int64"}, Schema{}, false},
 		{"simple bool", map[string]interface{}{"a": true}, []string{"A bool"}, Schema{}, false},
 		{"int array", map[string]interface{}{"a": []int{1, 2, 3}}, []string{"A []int"}, Schema{}, false},
-		{"empy interface array", map[string]interface{}{"a": []interface{}{}}, []string{"A []interface {}"}, Schema{}, false},
+		{"empty interface array", map[string]interface{}{"a": []interface{}{}}, []string{"A []interface {}"}, Schema{}, false},
 		{"mixed interface array", map[string]interface{}{"a": []interface{}{1, ""}}, []string{"A []interface {}"}, Schema{}, false},
-		{"int interface array", map[string]interface{}{"a": []interface{}{1, 2}}, []string{"A []int"}, Schema{}, false},
+		{"int interface array", map[string]interface{}{"a": []interface{}{1, 2}}, []string{"A []int64"}, Schema{}, false},
 		{"string interface array", map[string]interface{}{"a": []interface{}{"a", "b"}}, []string{"A []string"}, Schema{}, false},
 		{"map", map[string]interface{}{"a": map[string]interface{}{"b": 1}}, []string{"A struct {", "B int"}, Schema{}, false},
 		{"iface key map", map[string]interface{}{"a": map[interface{}]interface{}{"b": 1}}, []string{"A struct {", "B int"}, Schema{}, false},
@@ -212,5 +213,14 @@ func Benchmark_WriteConfigValue(b *testing.B) {
 	e := map[string]interface{}{}
 	for n := 0; n < b.N; n++ {
 		writeConfigValue(w, "Config", m, e, s, 0)
+	}
+}
+
+func Benchmark_WriteSchemaType(b *testing.B) {
+	w := util.NoopWriter{}
+	s := SchemaMap{}
+	m := map[string]interface{}{"a": map[interface{}]interface{}{"b0": 1, "b": map[string]interface{}{"c": []interface{}{1}, "d": "s", "e": 1}}}
+	for n := 0; n < b.N; n++ {
+		writeSchemaType(w, "Config", m, s, 0)
 	}
 }
