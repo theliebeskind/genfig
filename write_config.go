@@ -22,14 +22,23 @@ func writeConfig(w io.Writer, s SchemaMap, config map[string]interface{}, def ma
 		}
 	}()
 
+	// first write into buffer, so that no gobbledygook is written
+	// into some files, when someting panics
 	buf := bytes.NewBuffer([]byte{})
 
-	buf.Write(u.B("var " + strings.Title(env) + " = "))
+	// assigns this config to the according child of the global 'Envs' var
+	// via an init function
+	buf.Write(u.B("func init() {" + nl + defaultIndent + "Envs." + strings.Title(env) + " = "))
 
-	writeConfigValue(buf, defaultSchemaRootName, def, config, s, 0)
+	// write actual config
+	writeConfigValue(buf, defaultSchemaRootName, def, config, s, 1)
+
+	// closing bracket of init func
+	buf.Write(u.B(nl + "}" + nl))
 
 	// now write buffer to writer
 	w.Write(buf.Bytes())
+
 	return
 }
 
