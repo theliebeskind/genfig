@@ -16,6 +16,7 @@ import (
 const (
 	defaultEnvName          = "default"
 	defaultSchemaFilename   = "schema.go"
+	defaultEnvsFilename     = "envs.go"
 	defaulGenfigFilename    = "genfig.go"
 	defaultConfigFilePrefix = "env_"
 	defaultPackage          = "config"
@@ -73,7 +74,8 @@ func Generate(files []string, params Params) ([]string, error) {
 		return nil, errors.New("No files to generate from")
 	}
 
-	envs := make(map[string]map[string]interface{})
+	envs := []string{}
+	envMap := make(map[string]map[string]interface{})
 	fileMap := make(map[string]string)
 
 	for _, f := range files {
@@ -88,18 +90,18 @@ func Generate(files []string, params Params) ([]string, error) {
 		if _, exists := strategiesMap[typ]; !exists {
 			continue
 		}
-		if _, exists := envs[env]; exists {
+		if _, exists := envMap[env]; exists {
 			return nil, fmt.Errorf("Environment '%s' does already exist", env)
 		}
 		var err error
-		envs[env], err = parseFile(f, strategiesMap[typ])
+		envMap[env], err = parseFile(f, strategiesMap[typ])
 		if err != nil {
 			return nil, err
 		}
 		fileMap[env] = f
 	}
 
-	if len(envs) == 0 {
+	if len(envMap) == 0 {
 		return nil, errors.New("No suitable config files found")
 	}
 
@@ -109,7 +111,7 @@ func Generate(files []string, params Params) ([]string, error) {
 
 	var defaultEnv map[string]interface{}
 	var hasDefault bool
-	if defaultEnv, hasDefault = envs[params.DefaultEnv]; !hasDefault {
+	if defaultEnv, hasDefault = envMap[params.DefaultEnv]; !hasDefault {
 		return nil, errors.New("Missing default config")
 	}
 
@@ -129,9 +131,9 @@ func Generate(files []string, params Params) ([]string, error) {
 		}()
 		if f, err = os.Create(schemaFileName); err != nil {
 			return err
-	} else if err = writeHeader(f, defaultPackage, source); err != nil {
+		} else if err = writeHeader(f, defaultPackage, source); err != nil {
 			return err
-	} else if schema, err = writeAndReturnSchema(f, defaultEnv); err != nil {
+		} else if schema, err = writeAndReturnSchema(f, defaultEnv); err != nil {
 			return err
 		}
 		return
@@ -139,16 +141,14 @@ func Generate(files []string, params Params) ([]string, error) {
 		return nil, err
 	}
 
-	gofiles := make([]string, len(envs))
-	i := 0
-	for env, data := range envs {
-		if env == params.DefaultEnv {
-			continue
-		}
+	gofiles := []string{schemaFileName}
+
+	for env, data := range envMap {
 		out := defaultConfigFilePrefix + env + ".go"
 		path := filepath.Join(params.Dir, out)
 		source := fmt.Sprintf("%s (config built by merging '%s' and '%s')", defaultCmd, filepath.Base(fileMap[params.DefaultEnv]), filepath.Base(fileMap[env]))
 		name := strings.ReplaceAll(strings.Title(strings.ReplaceAll(env, "_", ".")), ".", "")
+		envs = append(envs, name)
 
 		// Check of schema of this config does conform the the global schema
 		// If is has additional fields or fields with different schema themselves,
@@ -185,10 +185,30 @@ func Generate(files []string, params Params) ([]string, error) {
 			return nil, err
 		}
 
-		gofiles[i] = path
-		i++
+		gofiles = append(gofiles, path)
 	}
-	gofiles = append(gofiles, schemaFileName)
+
+	envsFileName := filepath.Join(params.Dir, defaultEnvsFilename)
+	if err := func() (err error) {
+		var f *os.File
+		defer func() {
+			if f != nil {
+				_ = f.Close()
+			}
+		}()
+		if f, err = os.Create(envsFileName); err != nil {
+			return err
+		} else if err = writeHeader(f, defaultPackage, defaultCmd); err != nil {
+			return err
+		} else if err = writeEnvs(f, envs); err != nil {
+			return err
+		}
+		return
+	}(); err != nil {
+		return nil, err
+	}
+	gofiles = append(gofiles, envsFileName)
+
 	return gofiles, nil
 }
 
