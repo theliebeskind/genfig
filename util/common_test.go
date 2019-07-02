@@ -148,6 +148,7 @@ func Test_ParseString(t *testing.T) {
 	}{
 		{"empty", "", ""},
 		{"int", "1", int64(1)},
+		{"float", "1.1", float64(1.1)},
 		{"negative int", "-999", int64(-999)},
 		{"bool true", "true", true},
 		{"bool false", "false", false},
