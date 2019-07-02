@@ -14,13 +14,14 @@ import (
 )
 
 const (
-	defaultEnvName        = "default"
-	defaultSchemaFilename = "genfig_schema.go"
-	defaulGenfigFilename  = "genfig.go"
-	defaultPackage        = "config"
-	defaultCmd            = "genfig"
-	defaultIndent         = "  "
-	defaultNewline        = "\n"
+	defaultEnvName          = "default"
+	defaultSchemaFilename   = "schema.go"
+	defaulGenfigFilename    = "genfig.go"
+	defaultConfigFilePrefix = "env_"
+	defaultPackage          = "config"
+	defaultCmd              = "genfig"
+	defaultIndent           = "  "
+	defaultNewline          = "\n"
 )
 
 const (
@@ -133,7 +134,7 @@ func Generate(files []string, params Params) ([]string, error) {
 		if env == params.DefaultEnv {
 			continue
 		}
-		out := env + ".go"
+		out := defaultConfigFilePrefix + env + ".go"
 		path := filepath.Join(params.Dir, out)
 		source := fmt.Sprintf("%s (config built from '%s')", defaultCmd, filepath.Base(fileMap[env]))
 		name := strings.ReplaceAll(strings.Title(strings.ReplaceAll(env, "_", ".")), ".", "")

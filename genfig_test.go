@@ -35,11 +35,11 @@ func Test_Generate(t *testing.T) {
 		e, _ := parseFilename(s)
 		v := r
 		if e != "" && e != "default" {
-			v = append(v.([]string), e+".go")
+			v = append(v.([]string), defaultConfigFilePrefix+e+".go")
 		}
 		return v
 	}, []string{}).([]string)
-	goFiles = append(goFiles, "genfig_schema.go")
+	goFiles = append(goFiles, defaultSchemaFilename)
 
 	type args struct {
 		files []string
