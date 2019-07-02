@@ -157,29 +157,35 @@ func Test_writeConfig(t *testing.T) {
 	tests := []struct {
 		name     string
 		config   map[string]interface{}
+		def      map[string]interface{}
 		contains []string
 		wantErr  bool
 	}{
-		{"empty", map[string]interface{}{}, []string{}, false},
-		{"simple string", map[string]interface{}{"a": "b"}, []string{"A: \"b\""}, false},
-		{"simple int", map[string]interface{}{"a": 1}, []string{"A: 1"}, false},
-		{"simple bool", map[string]interface{}{"a": true}, []string{"A: true"}, false},
-		{"int array", map[string]interface{}{"a": []int{1, 2, 3}}, []string{"A: []int"}, false},
-		{"empy interface array", map[string]interface{}{"a": []interface{}{}}, []string{"A: []interface {}{}"}, false},
-		{"mixed interface array", map[string]interface{}{"a": []interface{}{1, ""}}, []string{"A: []interface {}{1, \"\"}"}, false},
-		{"int interface array", map[string]interface{}{"a": []interface{}{1, 2}}, []string{"A: []int{1, 2}"}, false},
-		{"string interface array", map[string]interface{}{"a": []interface{}{"a", "b"}}, []string{"A: []string"}, false},
-		{"map", map[string]interface{}{"a": map[string]interface{}{"b": 1}}, []string{"A: ConfigA{", "B: 1"}, false},
-		{"map of map", map[string]interface{}{"a": map[string]interface{}{"b": map[string]interface{}{"c": 1}}}, []string{"A: ConfigA{", "B: ConfigAB{", "C: 1"}, false},
+		{"empty", map[string]interface{}{}, nil, []string{}, false},
+		{"simple string", map[string]interface{}{"a": "b"}, nil, []string{"A: \"b\""}, false},
+		{"simple string with default", map[string]interface{}{"a": "b"}, map[string]interface{}{"a": "def"}, []string{"A: \"b\""}, false},
+		{"simple int", map[string]interface{}{"a": 1}, nil, []string{"A: 1"}, false},
+		{"simple bool", map[string]interface{}{"a": true}, nil, []string{"A: true"}, false},
+		{"int array", map[string]interface{}{"a": []int{1, 2, 3}}, nil, []string{"A: []int"}, false},
+		{"empy interface array", map[string]interface{}{"a": []interface{}{}}, nil, []string{"A: []interface {}{}"}, false},
+		{"mixed interface array", map[string]interface{}{"a": []interface{}{1, ""}}, nil, []string{"A: []interface {}{1, \"\"}"}, false},
+		{"int interface array", map[string]interface{}{"a": []interface{}{1, 2}}, nil, []string{"A: []int{1, 2}"}, false},
+		{"string interface array", map[string]interface{}{"a": []interface{}{"a", "b"}}, nil, []string{"A: []string"}, false},
+		{"map", map[string]interface{}{"a": map[string]interface{}{"b": 1}}, nil, []string{"A: ConfigA{", "B: 1"}, false},
+		{"map of map", map[string]interface{}{"a": map[string]interface{}{"b": map[string]interface{}{"c": 1}}}, nil, []string{"A: ConfigA{", "B: ConfigAB{", "C: 1"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &strings.Builder{}
+			def := tt.def
+			if def == nil {
+				def = tt.config
+			}
 			err := writeConfig(s, SchemaMap{
 				"ConfigA":   Schema{},
 				"ConfigAB":  Schema{},
 				"ConfigABC": Schema{},
-			}, tt.config, "test")
+			}, tt.config, def, "test")
 			if tt.wantErr {
 				require.Error(t, err)
 				return
@@ -190,5 +196,21 @@ func Test_writeConfig(t *testing.T) {
 				assert.Contains(t, got, c)
 			}
 		})
+	}
+}
+
+func Benchmark_WriteConfigValue(b *testing.B) {
+	w := util.NoopWriter{}
+	s := SchemaMap{
+		"ConfigA":   Schema{},
+		"ConfigAB":  Schema{},
+		"ConfigABC": Schema{},
+		"ConfigABD": Schema{},
+		"ConfigABE": Schema{},
+	}
+	m := map[string]interface{}{"a": map[interface{}]interface{}{"b": map[string]interface{}{"c": []interface{}{1}, "d": "s", "e": 1}}}
+	e := map[string]interface{}{}
+	for n := 0; n < b.N; n++ {
+		writeConfigValue(w, "Config", m, e, s, 0)
 	}
 }
