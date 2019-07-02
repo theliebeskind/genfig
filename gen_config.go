@@ -4,14 +4,17 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"reflect"
 	"strings"
 
 	"github.com/theliebeskind/genfig/util"
 	u "github.com/theliebeskind/genfig/util"
 )
 
-func writeConfig(w io.Writer, s SchemaMap, c map[string]interface{}, env string) (err error) {
+var (
+	indents = strings.Repeat(defaultIndent, maxLevel+1)
+)
+
+func writeConfig(w io.Writer, s SchemaMap, config map[string]interface{}, def map[string]interface{}, env string) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = u.RecoverError(r)
@@ -23,14 +26,14 @@ func writeConfig(w io.Writer, s SchemaMap, c map[string]interface{}, env string)
 
 	buf.Write(u.B("var " + strings.Title(env) + " = "))
 
-	writeConfigValue(buf, defaultSchemaRootName, c, s, 0)
+	writeConfigValue(buf, defaultSchemaRootName, def, config, s, 0)
 
 	// now write buffer to writer
 	w.Write(buf.Bytes())
 	return
 }
 
-func writeConfigLine(w io.Writer, p string, k string, v interface{}, s SchemaMap, l int) {
+func writeConfigLine(w io.Writer, p string, k string, v interface{}, o interface{}, s SchemaMap, l int) {
 	if l > maxLevel {
 		panic(fmt.Errorf("Maximum of %d levels exceeded", maxLevel))
 	}
@@ -41,38 +44,57 @@ func writeConfigLine(w io.Writer, p string, k string, v interface{}, s SchemaMap
 		panic(fmt.Errorf("Config property '%s' is not defined in the default config", p+n))
 	}
 
-	w.Write(u.B(strings.Repeat(defaultIndent, l)))
+	w.Write(u.B(indents[:l*len(defaultIndent)]))
 	w.Write(u.B(n + ": "))
 
-	writeConfigValue(w, p+n, v, s, l)
+	writeConfigValue(w, p+n, v, o, s, l)
 
 	w.Write(u.B("," + nl))
 }
 
-// writeConfigValue writes the actual value
-func writeConfigValue(w io.Writer, p string, v interface{}, s SchemaMap, l int) {
-	kind := reflect.TypeOf(v).Kind()
-
-	if kind == reflect.Map {
+func writeConfigValue(w io.Writer, p string, v interface{}, o interface{}, s SchemaMap, l int) {
+	switch v.(type) {
+	case map[string]interface{}:
 		w.Write(u.B(p + "{" + nl))
-		rv := reflect.ValueOf(v)
-		if rv.Len() > 0 {
-			iter := rv.MapRange()
-			for iter.Next() {
-				k := strings.Title(fmt.Sprintf("%v", iter.Key()))
-				writeConfigLine(w, p, k, iter.Value().Interface(), s, l+1)
-			}
+		for _k, _v := range v.(map[string]interface{}) {
+			_o := getOverwriteEntry(o, _k)
+			writeConfigLine(w, p, _k, _v, _o, s, l+1)
 		}
-		w.Write(u.B(strings.Repeat(defaultIndent, l)))
+		w.Write(u.B(indents[:l*len(defaultIndent)]))
 		w.Write(u.B("}"))
-	} else if kind == reflect.Slice && u.IsInterfaceSlice(v) {
-		typ := util.DetectSliceTypeString(v.([]interface{}))
-		w.Write(u.B(strings.Replace(fmt.Sprintf("%#v", v), "[]interface {}", typ, 1)))
-	} else if kind == reflect.Slice {
-		fmt.Fprintf(w, "%#v", v)
-	} else if kind == reflect.String {
-		fmt.Fprintf(w, `"%v"`, v)
-	} else {
-		fmt.Fprintf(w, "%v", v)
+	case map[interface{}]interface{}:
+		w.Write(u.B(p + "{" + nl))
+		for _k, _v := range v.(map[interface{}]interface{}) {
+			_o := getOverwriteEntry(o, _k)
+			writeConfigLine(w, p, fmt.Sprintf("%v", _k), _v, _o, s, l+1)
+		}
+		w.Write(u.B(indents[:l*len(defaultIndent)]))
+		w.Write(u.B("}"))
+	case []interface{}:
+		t := &v
+		if o != nil {
+			t = &o
+		}
+		typ := util.DetectSliceTypeString((*t).([]interface{}))
+		w.Write(u.B(strings.Replace(fmt.Sprintf("%#v", *t), "[]interface {}", typ, 1)))
+	default:
+		t := &v
+		if o != nil {
+			t = &o
+		}
+		fmt.Fprintf(w, `%#v`, *t)
 	}
+}
+
+func getOverwriteEntry(o interface{}, k interface{}) (r interface{}) {
+	if o == nil {
+		return
+	}
+	switch o.(type) {
+	case map[string]interface{}:
+		r = o.(map[string]interface{})[fmt.Sprintf("%v", k)]
+	case map[interface{}]interface{}:
+		r = o.(map[interface{}]interface{})[k]
+	}
+	return
 }

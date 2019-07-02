@@ -120,11 +120,22 @@ func Generate(files []string, params Params) ([]string, error) {
 	var schema SchemaMap
 	schemaFileName := filepath.Join(params.Dir, defaultSchemaFilename)
 	source := fmt.Sprintf("%s (schema built from '%s')", defaultCmd, filepath.Base(fileMap[params.DefaultEnv]))
-	if f, err := os.Create(schemaFileName); err != nil {
-		return nil, err
+	if err := func() (err error) {
+		var f *os.File
+		defer func() {
+			if f != nil {
+				_ = f.Close()
+			}
+		}()
+		if f, err = os.Create(schemaFileName); err != nil {
+			return err
 	} else if err = writeHeader(f, defaultPackage, source); err != nil {
-		return nil, err
+			return err
 	} else if schema, err = writeAndReturnSchema(f, defaultEnv); err != nil {
+			return err
+		}
+		return
+	}(); err != nil {
 		return nil, err
 	}
 
@@ -136,7 +147,7 @@ func Generate(files []string, params Params) ([]string, error) {
 		}
 		out := defaultConfigFilePrefix + env + ".go"
 		path := filepath.Join(params.Dir, out)
-		source := fmt.Sprintf("%s (config built from '%s')", defaultCmd, filepath.Base(fileMap[env]))
+		source := fmt.Sprintf("%s (config built by merging '%s' and '%s')", defaultCmd, filepath.Base(fileMap[params.DefaultEnv]), filepath.Base(fileMap[env]))
 		name := strings.ReplaceAll(strings.Title(strings.ReplaceAll(env, "_", ".")), ".", "")
 
 		// Check of schema of this config does conform the the global schema
@@ -155,13 +166,25 @@ func Generate(files []string, params Params) ([]string, error) {
 			}
 		}
 
-		if f, err := os.Create(path); err != nil {
-			return nil, err
-		} else if err := writeHeader(f, defaultPackage, source); err != nil {
-			return nil, err
-		} else if err := writeConfig(f, schema, data, name); err != nil {
+		if err := func() (err error) {
+			var f *os.File
+			defer func() {
+				if f != nil {
+					_ = f.Close()
+				}
+			}()
+			if f, err = os.Create(path); err != nil {
+				return err
+			} else if err = writeHeader(f, defaultPackage, source); err != nil {
+				return err
+			} else if err = writeConfig(f, schema, data, defaultEnv, name); err != nil {
+				return err
+			}
+			return
+		}(); err != nil {
 			return nil, err
 		}
+
 		gofiles[i] = path
 		i++
 	}
