@@ -15,11 +15,12 @@ A=b
 C_D=1
 C_E=2
 F=[2,"3","g"]
+G=0.5
 `
 )
 
 var (
-	complexDotenvResult = map[string]interface{}{"a": "b", "c": map[string]interface{}{"d": int64(1), "e": int64(2)}, "f": []interface{}{2, "3", "g"}}
+	complexDotenvResult = map[string]interface{}{"a": "b", "c": map[string]interface{}{"d": int64(1), "e": int64(2)}, "f": []interface{}{2, "3", "g"}, "g": 0.5}
 )
 
 func Test_Dotenv(t *testing.T) {
