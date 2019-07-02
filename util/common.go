@@ -85,6 +85,8 @@ func ReverseStrings(ss []string) {
 func ParseString(s string) interface{} {
 	if iv, err := strconv.ParseInt(s, 10, 0); err == nil {
 		return iv
+	} else if fv, err := strconv.ParseFloat(s, 0); err == nil {
+		return fv
 	} else if bv, err := strconv.ParseBool(s); err == nil {
 		return bv
 	} else if ia, ok := ParseArrayString(s); ok {
