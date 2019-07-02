@@ -9,5 +9,5 @@ import (
 )
 
 func main() {
-	fmt.Println(config.Default.Version)
+	fmt.Println(config.Development.Version)
 }
