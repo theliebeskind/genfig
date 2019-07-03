@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,7 +12,6 @@ import (
 	"unsafe"
 
 	zglob "github.com/mattn/go-zglob"
-	yaml "gopkg.in/yaml.v2"
 )
 
 // ResolveGlobs resolves globs and returns all found files unique
@@ -102,7 +102,7 @@ func ParseArrayString(s string) ([]interface{}, bool) {
 		return nil, false
 	}
 	r := []interface{}{}
-	if err := yaml.Unmarshal([]byte(s), &r); err != nil {
+	if err := json.Unmarshal([]byte(s), &r); err != nil {
 		return nil, false
 	}
 	return r, true
