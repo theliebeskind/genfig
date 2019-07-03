@@ -1,4 +1,4 @@
-package strategies_test
+package parsers_test
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	. "github.com/theliebeskind/genfig/strategies"
+	. "github.com/theliebeskind/genfig/parsers"
 )
 
 const (

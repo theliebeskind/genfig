@@ -1,4 +1,4 @@
-package strategies_test
+package parsers_test
 
 import (
 	"testing"
@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	. "github.com/theliebeskind/genfig/strategies"
+	. "github.com/theliebeskind/genfig/parsers"
 )
 
 const (
@@ -20,7 +20,7 @@ G=0.5
 )
 
 var (
-	complexDotenvResult = map[string]interface{}{"a": "b", "c": map[string]interface{}{"d": int64(1), "e": int64(2)}, "f": []interface{}{2, "3", "g"}, "g": 0.5}
+	complexDotenvResult = map[string]interface{}{"a": "b", "c": map[string]interface{}{"d": int64(1), "e": int64(2)}, "f": []interface{}{float64(2), "3", "g"}, "g": 0.5}
 )
 
 func Test_Dotenv(t *testing.T) {
