@@ -26,8 +26,8 @@ func Test_exec(t *testing.T) {
 		{"no args", []string{}, true},
 		{"without dir, no config files", []string{"*"}, true},
 		{"with dir, no config files", []string{"-dir", dir, "*"}, true},
-		{"without dir, valid config files", []string{fixturesDir + "*"}, false},
-		{"with dir, valid config files", []string{"-dir", dir, fixturesDir + "*"}, false},
+		{"without dir, valid config files", []string{fixturesDir + "default.yml", fixturesDir + "development.yml"}, false},
+		{"with dir, valid config files", []string{"-dir", dir, fixturesDir + "default.yml", fixturesDir + "development.yml"}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

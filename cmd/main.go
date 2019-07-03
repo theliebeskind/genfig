@@ -6,7 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/theliebeskind/genfig"
+	"github.com/theliebeskind/genfig/generator"
+
+	"github.com/theliebeskind/genfig/types"
 	"github.com/theliebeskind/genfig/util"
 )
 
@@ -38,12 +40,12 @@ func exec() {
 		panic("No input files found")
 	}
 
-	params := genfig.Params{
+	params := types.Params{
 		Dir: *dir,
 	}
 	fmt.Printf("Generating from files: %s\n", strings.Join(files, ", "))
 
-	gofiles, err := genfig.Generate(files, params)
+	gofiles, err := generator.Generate(files, params)
 	if err != nil {
 		panic(fmt.Sprintf("%v", err))
 	}
