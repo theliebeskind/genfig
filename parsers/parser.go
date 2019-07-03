@@ -1,4 +1,4 @@
-package strategies
+package parsers
 
 // ParsingStrategy interface
 type ParsingStrategy interface {

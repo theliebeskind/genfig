@@ -1,4 +1,4 @@
-package strategies
+package parsers
 
 import (
 	"errors"
