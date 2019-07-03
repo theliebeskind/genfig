@@ -152,8 +152,8 @@ func Test_ParseString(t *testing.T) {
 		{"negative int", "-999", int64(-999)},
 		{"bool true", "true", true},
 		{"bool false", "false", false},
-		{"int array", "[1,2,3]", []interface{}{1, 2, 3}},
-		{"string array", "[a,b,c]", []interface{}{"a", "b", "c"}},
+		{"int array", "[1,2,3]", []interface{}{float64(1), float64(2), float64(3)}},
+		{"string array", "[\"a\",\"b\",\"c\"]", []interface{}{"a", "b", "c"}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -174,12 +174,11 @@ func Test_ParseStringArray(t *testing.T) {
 		{"not array", "a,b", nil, false},
 		{"invalid array", "[a,sä#.,,]", nil, false},
 		{"empty array", "[]", []interface{}{}, true},
-		{"ints", "[1,2,3]", []interface{}{1, 2, 3}, true},
+		{"ints", "[1,2,3]", []interface{}{float64(1), float64(2), float64(3)}, true},
 		{"floats", "[1.1,2.2,3.3]", []interface{}{1.1, 2.2, 3.3}, true},
 		{"bools", "[true, false, true]", []interface{}{true, false, true}, true},
 		{"strings", `["a", "b", "c"]`, []interface{}{"a", "b", "c"}, true},
-		{"strings w/o \"", `[a, b,c]`, []interface{}{"a", "b", "c"}, true},
-		{"mixed", "[true, 1, 2.2, \"s\"]", []interface{}{true, 1, 2.2, "s"}, true},
+		{"mixed", "[true, 1, 2.2, \"s\"]", []interface{}{true, float64(1), 2.2, "s"}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
