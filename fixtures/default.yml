@@ -15,3 +15,7 @@ randomizer:
 apis:
   google:
     uri: google.com
+longDesc: 
+  en: Long description
+  de: Lange Beschreibung
+wip: true
