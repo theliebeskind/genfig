@@ -37,7 +37,7 @@ var (
 var (
 	allowedExtensions = []string{"\\.yml", "\\.yaml", "\\.json", "\\.toml"}
 	allowedPrefixes   = []string{"\\.env"}
-	parsersMap     = map[string]parsers.ParsingStrategy{
+	parsersMap        = map[string]parsers.ParsingStrategy{
 		"yml":    &ymlStrategy,
 		"json":   &ymlStrategy,
 		"toml":   &tomlStrategy,
@@ -193,6 +193,14 @@ func Generate(files []string, params types.Params) ([]string, error) {
 	}
 	gofiles = append(gofiles, envsFileName)
 
+	pluginCalls := map[string]string{}
+	// write plugins files
+	if files, err := writers.WritePlugins(schema, params.Dir, defaultPackage, defaultCmd, pluginCalls); err != nil {
+		return nil, err
+	} else {
+		gofiles = append(gofiles, files...)
+	}
+
 	// write init file
 	initFileName := filepath.Join(params.Dir, defaultInitFilename)
 	if err := func() (err error) {
@@ -206,7 +214,7 @@ func Generate(files []string, params types.Params) ([]string, error) {
 			return err
 		} else if err = writers.WriteHeader(f, defaultPackage, defaultCmd); err != nil {
 			return err
-		} else if err = writers.WriteInit(f, map[string]string{}); err != nil {
+		} else if err = writers.WriteInit(f, pluginCalls); err != nil {
 			return err
 		}
 		return
@@ -214,13 +222,6 @@ func Generate(files []string, params types.Params) ([]string, error) {
 		return nil, err
 	}
 	gofiles = append(gofiles, schemaFileName)
-
-	// write plugins files
-	if files, err := writers.WritePlugins(schema, params.Dir, defaultPackage, defaultCmd); err != nil {
-		return nil, err
-	} else {
-		gofiles = append(gofiles, files...)
-	}
 
 	return gofiles, nil
 }
