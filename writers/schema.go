@@ -108,7 +108,6 @@ func WriteSchemaType(w io.Writer, p string, v interface{}, s types.SchemaMap, l 
 	case []interface{}:
 		w.Write(u.B(u.Make64(u.DetectSliceTypeString(v.([]interface{})))))
 	default:
-		// get type string via reflect
 		w.Write(u.B(u.Make64(fmt.Sprintf("%T", v))))
 	}
 	return
