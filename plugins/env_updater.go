@@ -8,25 +8,28 @@ import (
 	"github.com/theliebeskind/genfig/types"
 )
 
-type envUpdatePlugin struct {
+type envUpdaterPlugin struct {
 	s   types.SchemaMap
 	tpl *template.Template
 }
 
 var (
-	envUpdater = envUpdatePlugin{
+	envUpdater = envUpdaterPlugin{
 		s: types.SchemaMap{},
 		tpl: template.Must(template.
 			New("envUpdater").
 			Funcs(template.FuncMap{
 				"upper": strings.ToUpper,
 				"title": strings.Title,
+				// Remove root (usually "Config_") from env var name
 				"cleanPrefixEnv": func(s string) string {
 					return strings.Join(strings.Split(s, "_")[1:], "_")
 				},
+				// Converte an env var name to a Config path
 				"makePath": func(s string) string {
 					return strings.Join(strings.Split(s, "_")[1:], ".")
 				},
+				// Substitute []*type* with *type*Slice
 				"renameSlice": func(s string) string {
 					if strings.HasPrefix(s, "[]") {
 						return s[2:] + "Slice"
@@ -97,14 +100,24 @@ func parseInterfaceSlice(s string) (a []interface{}, err error) {
 )
 
 func init() {
+	// "register" plugin
 	Plugins["env_updater"] = &envUpdater
 }
 
-func (p *envUpdatePlugin) SetSchemaMap(s types.SchemaMap) {
+// GetInitCall returns the availibility and the string of the
+// function to be called on init
+func (p *envUpdaterPlugin) GetInitCall() (string, bool) {
+	return "Current.UpdateFromEnv()", true
+}
+
+// SetSchemaMap sets the schema to be used when WriteTo is called
+func (p *envUpdaterPlugin) SetSchemaMap(s types.SchemaMap) {
 	p.s = s
 }
 
-func (p *envUpdatePlugin) WriteTo(w io.Writer) (l int64, err error) {
+// WriteTo performs the acutal writing to a buffer (or io.Writer).
+// For this plugin, the template is simply "rendered" into the writer.
+func (p *envUpdaterPlugin) WriteTo(w io.Writer) (l int64, err error) {
 	err = p.tpl.Execute(w, p.s)
 	return
 }
