@@ -9,7 +9,12 @@
       "type": "go",
       "request": "launch",
       "mode": "debug",
-      "program": "${workspaceFolder}/example"
+      "program": "${workspaceFolder}/example",
+      "env":{
+        "DB_USER": "peter",
+        "DB_PASS": "123", 
+        "DB_URI": "db://goto/${project}/${version}"
+      }
     },
     {
       "name": "Launch",
