@@ -14,7 +14,7 @@ const (
 )
 
 //WritePlugins writes
-func WritePlugins(schema types.SchemaMap, dir string, pkg string, cmd string) ([]string, error) {
+func WritePlugins(schema types.SchemaMap, dir string, pkg string, cmd string, calls map[string]string) ([]string, error) {
 	files := []string{}
 	for n, p := range plugins.Plugins {
 		p.SetSchemaMap(schema)
@@ -28,6 +28,9 @@ func WritePlugins(schema types.SchemaMap, dir string, pkg string, cmd string) ([
 		} else {
 			_ = f.Close()
 			files = append(files, path)
+		}
+		if c, has := p.GetInitCall(); has {
+			calls[n] = c
 		}
 	}
 	return files, nil
