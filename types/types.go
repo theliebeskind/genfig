@@ -1,7 +1,5 @@
 package types
 
-import "io"
-
 // Schema defines the schema
 type Schema struct {
 	IsStruct bool
@@ -18,10 +16,4 @@ type Params struct {
 	Dir        string
 	DefaultEnv string
 	MergeFiles bool
-}
-
-// Plugin interface
-type Plugin interface {
-	io.WriterTo
-	SetSchemaMap(SchemaMap)
 }
