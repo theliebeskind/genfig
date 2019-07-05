@@ -7,23 +7,22 @@ import (
 
 var (
 	initTpl = template.Must(template.New("init").Parse(`import (
-		"os"
-	)
-	
-	// Current is the current config, selected by the curren env and
-	// updated by the availalbe env vars
-	var Current *Config
-	
-	// This init tries to retreive the current environemnt via the
-	// common env var 'ENV' and applies activated plugins
-	func init() {
-		Current, _ = Get(os.Getenv("ENV"))
-	
-		// apply activated plugins
-		Current.UpdateFromEnv()
+	"os"
+)
 
-		fmt.Printf("Left after Substitution: %d", Current.Substitude())
-	}
+// Current is the current config, selected by the curren env and
+// updated by the availalbe env vars
+var Current *Config
+
+// This init tries to retreive the current environemnt via the
+// common env var 'ENV' and applies activated plugins
+func init() {
+	Current, _ = Get(os.Getenv("ENV"))
+	{{range $k, $v := .PluginCalls}}
+	// calling plugin {{$k}}
+	{{$v}}
+	{{end}}
+}
 	
 `))
 )
