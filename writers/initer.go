@@ -21,6 +21,8 @@ var (
 	
 		// apply activated plugins
 		Current.UpdateFromEnv()
+
+		fmt.Printf("Left after Substitution: %d", Current.Substitude())
 	}
 	
 `))
