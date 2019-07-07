@@ -1,4 +1,4 @@
-module github.com/theliebeskind/genfig
+module github.com/theliebeskind/go-genfig
 
 go 1.12
 
