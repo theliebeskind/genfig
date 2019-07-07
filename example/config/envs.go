@@ -2,20 +2,20 @@
 
 package config
 
-// Envs holds the envirnoment-specific configurations so that
+// Envs holds the environment-specific configurations so that
 // they can easily be accessed by e.g. Envs.Default
-var Envs = struct{ 
-	Default Config
-	Development Config
+var Envs = struct {
+	Default          Config
+	Development      Config
 	DevelopmentLocal Config
-	Local Config
+	Local            Config
 }{}
 
 var envMap = map[string]*Config{
-	"default": &Envs.Default,
-	"development": &Envs.Development,
+	"default":           &Envs.Default,
+	"development":       &Envs.Development,
 	"development.local": &Envs.DevelopmentLocal,
-	"local": &Envs.Local,
+	"local":             &Envs.Local,
 }
 
 // Get returns the config matching 'env' if found, otherwie the default config.

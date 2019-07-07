@@ -195,11 +195,11 @@ func Generate(files []string, params types.Params) ([]string, error) {
 
 	pluginCalls := map[string]string{}
 	// write plugins files
-	if files, err := writers.WritePlugins(schema, params.Dir, defaultPackage, defaultCmd, pluginCalls); err != nil {
+	var pfiles []string
+	if pfiles, err = writers.WritePlugins(schema, params.Dir, defaultPackage, defaultCmd, pluginCalls); err != nil {
 		return nil, err
-	} else {
-		gofiles = append(gofiles, files...)
 	}
+	gofiles = append(gofiles, pfiles...)
 
 	// write init file
 	initFileName := filepath.Join(params.Dir, defaultInitFilename)
