@@ -18,7 +18,12 @@ jobs:
       - run: mkdir -p $TEST_RESULTS # create the test results directory
       - run: 
           name: Tests
-          command: gotestsum --junitfile ${TEST_RESULTS}/gotestsum-report.xml
+          command: gotestsum -- -coverprofile="coverage.txt" -covermode=atomic ./...
+
+      - run:
+          name: Codecov
+          command: - bash <(curl -s https://codecov.io/bash)
+
       - run: make build
       - save_cache:
           key: go-mod-v1-{{ checksum "go.sum" }}
