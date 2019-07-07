@@ -16,20 +16,6 @@
         "clear": false
       },
       "problemMatcher": []
-    },
-    {
-      "label": "watch_generate",
-      "type": "shell",
-      "command": "./scripts/watch.sh qtpl",
-      "presentation": {
-        "echo": true,
-        "reveal": "never",
-        "focus": false,
-        "panel": "shared",
-        "showReuseMessage": false,
-        "clear": false
-      },
-      "problemMatcher": []
     }
   ]
 }
