@@ -15,3 +15,5 @@ cmd/config
 fixtures/**/*.go
 
 .DS_Store
+
+bin/**/*
