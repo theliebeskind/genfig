@@ -3,7 +3,7 @@ package plugins
 import (
 	"io"
 
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/go-genfig/types"
 )
 
 // Plugin interface

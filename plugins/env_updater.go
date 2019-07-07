@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/go-genfig/types"
 )
 
 type envUpdaterPlugin struct {

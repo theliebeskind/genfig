@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/theliebeskind/genfig/util"
+	"github.com/theliebeskind/go-genfig/util"
 )
 
 const (

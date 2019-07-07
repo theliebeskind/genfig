@@ -4,9 +4,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/theliebeskind/genfig/plugins"
+	"github.com/theliebeskind/go-genfig/plugins"
 
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/go-genfig/types"
 )
 
 const (
