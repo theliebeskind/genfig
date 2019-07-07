@@ -14,7 +14,7 @@ var (
 // updated by the availalbe env vars
 var Current *Config
 
-// This init tries to retreive the current environemnt via the
+// This init tries to retrieve the current environment via the
 // common env var 'ENV' and applies activated plugins
 func init() {
 	Current, _ = Get(os.Getenv("ENV"))

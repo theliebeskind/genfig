@@ -32,8 +32,8 @@ func Test_ResolveGlobs(t *testing.T) {
 		{"y first level file", args{[]string{"*.y"}}, []string{"c.y"}},
 		{"x first leve files", args{[]string{"*.x"}}, []string{"a.x", "b.x"}},
 		{"all y files", args{[]string{"**/*.y"}}, []string{"c.y", "sub/d.y"}},
-		{"multipe globs, unique", args{[]string{"a.*", "b.*"}}, []string{"a.x", "b.x"}},
-		{"multipe globs, not unique", args{[]string{"a.*", "*.x"}}, []string{"a.x", "b.x"}},
+		{"multiple globs, unique", args{[]string{"a.*", "b.*"}}, []string{"a.x", "b.x"}},
+		{"multiple globs, not unique", args{[]string{"a.*", "*.x"}}, []string{"a.x", "b.x"}},
 	}
 	cwd, _ := os.Getwd()
 	_ = os.Chdir(filepath.Join(fixturesDir, "/dir"))

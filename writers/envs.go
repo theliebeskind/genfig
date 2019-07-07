@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	envsTpl = template.Must(template.New("envs").Parse(`// Envs holds the envirnoment-specific configurations so that
+	envsTpl = template.Must(template.New("envs").Parse(`// Envs holds the environment-specific configurations so that
 // they can easily be accessed by e.g. Envs.Default
 var Envs = struct{ 
 {{range $_, $k := .Envs}}	{{$k}} Config
