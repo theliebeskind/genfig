@@ -1,5 +1,5 @@
-# genfig
-GENFIG go config files from yaml config files
+# go-genfig
+GO-GENFIG generates a static configuration package from variuos config files.
 
 ![Latest version](https://img.shields.io/github/tag/theliebeskind/go-genfig.svg?label=latest)
 [![CircleCI](https://img.shields.io/circleci/build/gh/theliebeskind/go-genfig.svg?logo=circleci)](https://circleci.com/gh/theliebeskind/go-genfig)
