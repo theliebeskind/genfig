@@ -1,7 +1,7 @@
 package writers
 
 var (
-	indent   = "  " // default is two spaces
+	indent   = "\t" // default is two spaces
 	maxLevel = 5    // default is 5 maximum levels of recursion
 	nl       = "\n"
 )
