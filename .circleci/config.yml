@@ -5,7 +5,7 @@ jobs:
       - image: circleci/golang:1.12
 
     environment: # environment variables for the build itself
-      TEST_RESULTS: /tmp/test-results # path to where test results will be saved
+      TEST_RESULTS: /tmp/test-results/go # path to where test results will be saved
 
     steps:
       - checkout
@@ -18,7 +18,7 @@ jobs:
       - run: mkdir -p $TEST_RESULTS # create the test results directory
       - run: 
           name: Tests
-          command: gotestsum -- -coverprofile="coverage.txt" -covermode=atomic ./...
+          command: gotestsum --junitfile ${TEST_RESULTS}/results.xml -- -coverprofile="coverage.txt" -covermode=atomic ./...
 
       - run:
           name: Codecov
