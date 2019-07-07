@@ -1,4 +1,4 @@
-//go:generate go run ../cmd ../fixtures/default.yml ../fixtures/*.yaml ../fixtures/*.toml ../fixtures/.env*
+//go:generate go run ../ ../fixtures/default.yml ../fixtures/*.yaml ../fixtures/*.toml ../fixtures/.env*
 
 package main
 
