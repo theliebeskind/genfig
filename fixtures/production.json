@@ -1,0 +1,10 @@
+{
+  "version": "1",
+  "server": {
+    "port": 1234,
+    "host": "mydomain.com"
+  },
+  "db": {
+    "uri": "mongdb://${db.user}:${db.pass}@remotedb:27018/proddb"
+  }
+}

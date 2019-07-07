@@ -1,0 +1,21 @@
+---
+version: 0.1.0
+project: genfig
+server:
+  port: 1234
+  host: localhost
+db:
+  user: ""
+  pass: ""
+  uri: "mongdb://localhos:27017/db"
+secrets:
+  - ""
+randomizer:
+  threshold: 0.75
+apis:
+  google:
+    uri: google.com
+longDesc: 
+  en: Long description
+  de: Lange Beschreibung
+wip: true
