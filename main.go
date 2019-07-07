@@ -12,9 +12,19 @@ import (
 	"github.com/theliebeskind/go-genfig/util"
 )
 
+// PROJECT is the name of this project
+var PROJECT = "genfig"
+
 var (
 	dir = flag.String("dir", "config", "directory to write generated files into")
 )
+
+func init() {
+	flag.Usage = func() {
+		fmt.Printf("Usage of %s:\n", PROJECT)
+		flag.PrintDefaults()
+	}
+}
 
 func main() {
 	defer func() {
@@ -30,11 +40,13 @@ func main() {
 
 func exec() {
 	flag.Parse()
-	fmt.Printf("Called with \n\tdir:\t'%s'\n\targs:\t%s\n", *dir, strings.Join(flag.Args(), ", "))
 	args := flag.Args()
 	if len(args) == 0 {
 		args = []string{"*"}
 	}
+
+	fmt.Printf("Called with \n\tdir:\t'%s'\n\targs:\t%s\n\n", *dir, strings.Join(args, ", "))
+
 	files := util.ResolveGlobs(args...)
 	if len(files) == 0 {
 		panic("No input files found")

@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	fixturesDir = "../fixtures/"
+	fixturesDir = "../../fixtures/"
 )
 
 var (
