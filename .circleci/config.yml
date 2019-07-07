@@ -3,10 +3,34 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.12
+
+    environment: # environment variables for the build itself
+      TEST_RESULTS: /tmp/test-results # path to where test results will be saved
+
     steps:
       - checkout
-      - run: make test
+
+      - restore_cache:
+          keys:
+            - go-mod-v1-{{ checksum "go.sum" }}
+      
+      # Tests
+      - run: mkdir -p $TEST_RESULTS # create the test results directory
+      - run: 
+        name: Tests
+        command: gotestsum --junitfile ${TEST_RESULTS}/gotestsum-report.xml
       - run: make build
+      - save_cache:
+          key: go-mod-v1-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg/mod"
+
+      - store_artifacts: # upload test summary for display in Artifacts
+          path: ${TEST_RESULTS}
+          destination: raw-test-output
+
+      - store_test_results: # upload test results for display in Test Summary
+          path: ${TEST_RESULTS}
 
 workflows:
   version: 2
