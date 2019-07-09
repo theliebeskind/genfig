@@ -35,6 +35,9 @@ func Test_Dotenv(t *testing.T) {
 	}{
 		{"empty data", args{}, nil, true},
 		{"invalid data", args{[]byte("foobar´?")}, nil, true},
+		{"double occurency map on basic", args{[]byte("A=1\nA_A=2")}, nil, true},
+		{"double occurency basic on map", args{[]byte("A_A=2\nA=1")}, nil, true},
+		{"nested double occurency", args{[]byte("A_A_A=2\nA_A=1")}, nil, true},
 		{"valid dotenv", args{[]byte("A=1")}, map[string]interface{}{"a": int64(1)}, false},
 		{"complex dotenv", args{[]byte(complexDotenv)}, complexDotenvResult, false},
 	}

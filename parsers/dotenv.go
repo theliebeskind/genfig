@@ -18,9 +18,18 @@ func (s *DotenvStrategy) Parse(data []byte) (map[string]interface{}, error) {
 		return nil, errors.New("Empty data")
 	}
 
-	envs, err := dotenv.Unmarshal(string(data))
-	if err != nil {
-		return nil, err
+		var item interface{} = r
+		for i, key := range keys {
+			if item, found := item.(map[string]interface{})[key]; found {
+				switch item.(type) {
+				case map[string]interface{}:
+					if len(keys) == i+1 {
+						return nil, fmt.Errorf("Key '%s' is already present with differnt type (old: map, new: basic)", keys)
+					}
+				default:
+					return nil, fmt.Errorf("Key '%s' is already present with different type (old: basic, new: map)", keys)
+				}
+			}
 	}
 
 	r := map[string]interface{}{}
