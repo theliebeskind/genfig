@@ -39,6 +39,7 @@ func Test_Dotenv(t *testing.T) {
 		{"double occurency basic on map", args{[]byte("A_A=2\nA=1")}, nil, true},
 		{"nested double occurency", args{[]byte("A_A_A=2\nA_A=1")}, nil, true},
 		{"valid dotenv", args{[]byte("A=1")}, map[string]interface{}{"a": int64(1)}, false},
+		{"also valid dotenv", args{[]byte("A: 1")}, map[string]interface{}{"a": int64(1)}, false},
 		{"complex dotenv", args{[]byte(complexDotenv)}, complexDotenvResult, false},
 	}
 	s := DotenvStrategy{}
