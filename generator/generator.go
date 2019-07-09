@@ -9,12 +9,12 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/theliebeskind/go-genfig/writers"
+	"github.com/theliebeskind/genfig/writers"
 
-	"github.com/theliebeskind/go-genfig/types"
+	"github.com/theliebeskind/genfig/types"
 
-	"github.com/theliebeskind/go-genfig/parsers"
-	"github.com/theliebeskind/go-genfig/util"
+	"github.com/theliebeskind/genfig/parsers"
+	"github.com/theliebeskind/genfig/util"
 )
 
 const (

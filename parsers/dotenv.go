@@ -5,8 +5,7 @@ import (
 	"strings"
 
 	mergo "github.com/imdario/mergo"
-	dotenv "github.com/joho/godotenv"
-	"github.com/theliebeskind/go-genfig/util"
+	"github.com/theliebeskind/genfig/util"
 )
 
 // DotenvStrategy parses yaml and json files

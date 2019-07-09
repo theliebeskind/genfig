@@ -5,7 +5,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/theliebeskind/go-genfig/example/config"
+	"github.com/theliebeskind/genfig/example/config"
 )
 
 func main() {

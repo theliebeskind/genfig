@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	. "github.com/theliebeskind/go-genfig/parsers"
+	. "github.com/theliebeskind/genfig/parsers"
 )
 
 const (

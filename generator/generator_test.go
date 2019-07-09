@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/theliebeskind/go-genfig/types"
-	"github.com/theliebeskind/go-genfig/util"
-	"github.com/theliebeskind/go-genfig/writers"
+	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/util"
+	"github.com/theliebeskind/genfig/writers"
 )
 
 const (

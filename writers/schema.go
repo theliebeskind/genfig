@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/theliebeskind/go-genfig/types"
-	u "github.com/theliebeskind/go-genfig/util"
+	"github.com/theliebeskind/genfig/types"
+	u "github.com/theliebeskind/genfig/util"
 )
 
 const (

@@ -6,10 +6,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/theliebeskind/go-genfig/generator"
+	"github.com/theliebeskind/genfig/generator"
 
-	"github.com/theliebeskind/go-genfig/types"
-	"github.com/theliebeskind/go-genfig/util"
+	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/util"
 )
 
 // PROJECT is the name of this project

@@ -6,10 +6,10 @@ import (
 	"io"
 	"strings"
 
-	"github.com/theliebeskind/go-genfig/types"
+	"github.com/theliebeskind/genfig/types"
 
-	"github.com/theliebeskind/go-genfig/util"
-	u "github.com/theliebeskind/go-genfig/util"
+	"github.com/theliebeskind/genfig/util"
+	u "github.com/theliebeskind/genfig/util"
 )
 
 var (
