@@ -108,6 +108,7 @@ func Test_ReduceStrings(t *testing.T) {
 func TestCleanDir(t *testing.T) {
 	dir := "clean"
 	cwd, _ := os.Getwd()
+	os.MkdirAll(filepath.Join(fixturesDir, dir), 0777)
 	os.Chdir(filepath.Join(fixturesDir, dir))
 	defer os.Chdir(cwd)
 
