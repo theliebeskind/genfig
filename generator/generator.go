@@ -132,7 +132,12 @@ func Generate(files []string, params models.Params) ([]string, error) {
 
 	// write config files
 	for env, data := range envMap {
-		out := defaultConfigFilePrefix + env + ".go"
+		out := defaultConfigFilePrefix
+		if env == "test" {
+			out += "test_.go"
+		} else {
+			out += env + ".go"
+		}
 		path := filepath.Join(params.Dir, out)
 		source := fmt.Sprintf("%s (config built by merging '%s' and '%s')", defaultCmd, filepath.Base(fileMap[params.DefaultEnv]), filepath.Base(fileMap[env]))
 		name := strings.ReplaceAll(strings.Title(strings.ReplaceAll(env, "_", ".")), ".", "")

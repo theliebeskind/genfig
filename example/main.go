@@ -1,5 +1,5 @@
 //go:generate rm -rf config
-//go:generate go run ../ --dir config ../fixtures/configs/default.yml ../fixtures/configs/*.yaml ../fixtures/configs/*.toml ../fixtures/configs/.env*
+//go:generate go run ../ --dir config ../fixtures/configs/default.yml ../fixtures/configs/*.yaml ../fixtures/configs/*.json ../fixtures/configs/*.toml ../fixtures/configs/.env*
 
 package main
 
@@ -15,4 +15,6 @@ func main() {
 	fmt.Println(config.Current.Secrets)
 	fmt.Println(config.Current.Server.Port)
 	fmt.Println(config.Current.Db)
+
+	fmt.Println(config.Envs.Test.Version)
 }

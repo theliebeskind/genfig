@@ -32,6 +32,7 @@ func Test_Generate(t *testing.T) {
 		configsDir + "/development.local.toml",
 		configsDir + "/development.yaml",
 		configsDir + "/production.json",
+		configsDir + "/test.json",
 	}
 	goodConfigFiles := append(configFilesWithoutDefault, configsDir+"/default.yml")
 	duplicateConfigFiles := []string{configsDir + "/local.yml", configsDir + "/local.yml"}
@@ -42,6 +43,9 @@ func Test_Generate(t *testing.T) {
 		e, _ := parseFilename(s)
 		v := r
 		if e != "" && e != "default" {
+			if e == "test" {
+				e = "test_"
+			}
 			v = append(v.([]string), defaultConfigFilePrefix+e+".go")
 		}
 		return v
