@@ -1,35 +1,42 @@
 package generator
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/models"
 	"github.com/theliebeskind/genfig/util"
 )
 
-const (
-	fixturesDir = "../fixtures/"
+var (
+	fixturesDir, _ = filepath.Abs("../fixtures/")
 )
 
 func Test_Generate(t *testing.T) {
+	tmpDir, _ := ioutil.TempDir("", "genfig")
+	defer os.RemoveAll(tmpDir)
+
 	cwd, _ := os.Getwd()
-	os.Chdir(filepath.Join(fixturesDir, "cwd"))
+	os.MkdirAll(filepath.Join(tmpDir, "workdir"), 0777)
+	os.Chdir(filepath.Join(tmpDir, "workdir"))
 	defer os.Chdir(cwd)
 
+	configsDir := filepath.Join(fixturesDir, "configs/")
+
 	configFilesWithoutDefault := []string{
-		"../.env.local",
-		"../development.local.toml",
-		"../development.yaml",
-		"../production.json",
+		configsDir + "/.env.local",
+		configsDir + "/development.local.toml",
+		configsDir + "/development.yaml",
+		configsDir + "/production.json",
 	}
-	goodConfigFiles := append(configFilesWithoutDefault, "../default.yml")
-	duplicateConfigFiles := []string{"../local.yml", "../local.yml"}
-	nonconformatnConfigFiles := []string{"../default.yml", "../nonconformant.yml"}
-	tooManyLevelsConfigFiles := []string{"../default.with.too.many.levels.yml"}
+	goodConfigFiles := append(configFilesWithoutDefault, configsDir+"/default.yml")
+	duplicateConfigFiles := []string{configsDir + "/local.yml", configsDir + "/local.yml"}
+	nonconformatnConfigFiles := []string{configsDir + "/default.yml", configsDir + "/nonconformant.yml"}
+	tooManyLevelsConfigFiles := []string{configsDir + "/default.with.too.many.levels.yml"}
 
 	goFiles := util.ReduceStrings(goodConfigFiles, func(r interface{}, s string) interface{} {
 		e, _ := parseFilename(s)
@@ -44,7 +51,7 @@ func Test_Generate(t *testing.T) {
 
 	type args struct {
 		files []string
-		p     types.Params
+		p     models.Params
 	}
 	tests := []struct {
 		name    string
@@ -52,15 +59,15 @@ func Test_Generate(t *testing.T) {
 		wantErr bool
 	}{
 		{"empty", args{}, true},
-		{"nonexisting file(s)", args{[]string{"nope.yml"}, types.Params{}}, true},
-		{"not a config file", args{[]string{"../notaconfig.txt"}, types.Params{}}, true},
-		{"duplicate env files", args{duplicateConfigFiles, types.Params{}}, true},
-		{"no default", args{configFilesWithoutDefault, types.Params{}}, true},
-		{"too many levels", args{tooManyLevelsConfigFiles, types.Params{DefaultEnv: "default.with.too.many.levels"}}, true},
-		{"additional field(s) to default", args{goodConfigFiles, types.Params{DefaultEnv: "local"}}, true},
-		{"non conformant value to default", args{nonconformatnConfigFiles, types.Params{}}, true},
-		{"existing files, no dir", args{goodConfigFiles, types.Params{}}, false},
-		{"existing files with dir", args{goodConfigFiles, types.Params{Dir: filepath.Clean("../out")}}, false},
+		{"nonexisting file(s)", args{[]string{"nope.yml"}, models.Params{}}, true},
+		{"not a config file", args{[]string{configsDir + "/notaconfig.txt"}, models.Params{}}, true},
+		{"duplicate env files", args{duplicateConfigFiles, models.Params{}}, true},
+		{"no default", args{configFilesWithoutDefault, models.Params{}}, true},
+		{"too many levels", args{tooManyLevelsConfigFiles, models.Params{DefaultEnv: "default.with.too.many.levels"}}, true},
+		{"additional field(s) to default", args{goodConfigFiles, models.Params{DefaultEnv: "local"}}, true},
+		{"non conformant value to default", args{nonconformatnConfigFiles, models.Params{}}, true},
+		{"existing files, no dir", args{goodConfigFiles, models.Params{}}, false},
+		{"existing files with dir", args{goodConfigFiles, models.Params{Dir: filepath.Clean("../out")}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
