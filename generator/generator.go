@@ -55,8 +55,12 @@ func Generate(files []string, params models.Params) ([]string, error) {
 	}
 
 	if !filepath.IsAbs(params.Dir) {
-		wd, _ := os.Getwd()
-		params.Dir = filepath.Join(wd, params.Dir)
+		wd, err := os.Getwd()
+		if err != nil {
+			fmt.Printf("Could not get CWD: %v", err)
+		} else {
+			params.Dir = filepath.Join(wd, params.Dir)
+		}
 	}
 
 	envs := map[string]string{}
