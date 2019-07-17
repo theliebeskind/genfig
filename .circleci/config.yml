@@ -18,7 +18,7 @@ jobs:
       - run: mkdir -p $TEST_RESULTS # create the test results directory
       - run: 
           name: Tests
-          command: gotestsum --junitfile ${TEST_RESULTS}/results.xml -- -coverprofile="coverage.txt" -covermode=atomic ./...
+          command: gotestsum --junitfile ${TEST_RESULTS}/results.xml -- -coverprofile="coverage.txt" -covermode=atomic `go list ./... | grep -v "fixtures\|example\|models"`
 
       - run:
           name: Codecov
