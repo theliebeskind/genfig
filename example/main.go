@@ -1,4 +1,5 @@
-//go:generate go run ../ ../fixtures/default.yml ../fixtures/*.yaml ../fixtures/*.toml ../fixtures/.env*
+//go:generate rm -rf config
+//go:generate go run ../ --dir config ../fixtures/configs/default.yml ../fixtures/configs/*.yaml ../fixtures/configs/*.toml ../fixtures/configs/.env*
 
 package main
 
