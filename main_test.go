@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -26,7 +25,6 @@ func Test_run(t *testing.T) {
 	defer os.Chdir(cwd)
 	err := os.Chdir(dir)
 	require.NoError(t, err)
-	fmt.Printf("CWD is now %s\n", dir)
 
 	configsDir := filepath.Join(fixturesDir, "configs")
 
