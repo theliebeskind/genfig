@@ -4,7 +4,7 @@ import (
 	"io"
 	"text/template"
 
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/models"
 )
 
 type configTestPlugin struct {
@@ -37,7 +37,7 @@ func (p *configTestPlugin) GetInitCall() (string, bool) {
 }
 
 // SetSchemaMap sets the schema to be used when WriteTo is called
-func (p *configTestPlugin) SetSchemaMap(_ types.SchemaMap) {
+func (p *configTestPlugin) SetSchemaMap(_ models.SchemaMap) {
 }
 
 // WriteTo performs the acutal writing to a buffer (or io.Writer).

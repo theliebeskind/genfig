@@ -8,7 +8,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/models"
 	"github.com/theliebeskind/genfig/util"
 )
 
@@ -31,6 +31,7 @@ func Test_WriteConfig(t *testing.T) {
 		{"int interface array", map[string]interface{}{"a": []interface{}{1, 2}}, nil, []string{"A: []int{1, 2}"}, false},
 		{"string interface array", map[string]interface{}{"a": []interface{}{"a", "b"}}, nil, []string{"A: []string"}, false},
 		{"map", map[string]interface{}{"a": map[string]interface{}{"b": 1}}, nil, []string{"A: ConfigA{", "B: 1"}, false},
+		{"map with interface key", map[string]interface{}{"a": map[interface{}]interface{}{"b": 1}}, nil, []string{"A: ConfigA{", "B: 1"}, false},
 		{"map of map", map[string]interface{}{"a": map[string]interface{}{"b": map[string]interface{}{"c": 1}}}, nil, []string{"A: ConfigA{", "B: ConfigAB{", "C: 1"}, false},
 	}
 	for _, tt := range tests {
@@ -40,10 +41,10 @@ func Test_WriteConfig(t *testing.T) {
 			if def == nil {
 				def = tt.config
 			}
-			err := writers.WriteConfig(s, types.SchemaMap{
-				"ConfigA":   types.Schema{},
-				"ConfigAB":  types.Schema{},
-				"ConfigABC": types.Schema{},
+			err := writers.WriteConfig(s, models.SchemaMap{
+				"ConfigA":   models.Schema{},
+				"ConfigAB":  models.Schema{},
+				"ConfigABC": models.Schema{},
 			}, tt.config, def, "test")
 			if tt.wantErr {
 				require.Error(t, err)
@@ -60,12 +61,12 @@ func Test_WriteConfig(t *testing.T) {
 
 func Benchmark_WriteConfigValue(b *testing.B) {
 	w := util.NoopWriter{}
-	s := types.SchemaMap{
-		"ConfigA":   types.Schema{},
-		"ConfigAB":  types.Schema{},
-		"ConfigABC": types.Schema{},
-		"ConfigABD": types.Schema{},
-		"ConfigABE": types.Schema{},
+	s := models.SchemaMap{
+		"ConfigA":   models.Schema{},
+		"ConfigAB":  models.Schema{},
+		"ConfigABC": models.Schema{},
+		"ConfigABD": models.Schema{},
+		"ConfigABE": models.Schema{},
 	}
 	m := map[string]interface{}{"a": map[interface{}]interface{}{"b": map[string]interface{}{"c": []interface{}{1}, "d": "s", "e": 1}}}
 	e := map[string]interface{}{}

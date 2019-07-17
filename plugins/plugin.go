@@ -3,13 +3,13 @@ package plugins
 import (
 	"io"
 
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/models"
 )
 
 // Plugin interface
 type Plugin interface {
 	io.WriterTo
-	SetSchemaMap(types.SchemaMap)
+	SetSchemaMap(models.SchemaMap)
 	GetInitCall() (string, bool)
 }
 

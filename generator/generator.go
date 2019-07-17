@@ -11,7 +11,7 @@ import (
 
 	"github.com/theliebeskind/genfig/writers"
 
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/models"
 
 	"github.com/theliebeskind/genfig/parsers"
 	"github.com/theliebeskind/genfig/util"
@@ -48,7 +48,7 @@ var (
 )
 
 // Generate generates the go config files
-func Generate(files []string, params types.Params) ([]string, error) {
+func Generate(files []string, params models.Params) ([]string, error) {
 	var err error
 	if len(files) == 0 {
 		return nil, errors.New("No files to generate from")
@@ -107,7 +107,7 @@ func Generate(files []string, params types.Params) ([]string, error) {
 	gofiles := []string{}
 
 	// write schemafile
-	var schema types.SchemaMap
+	var schema models.SchemaMap
 	schemaFileName := filepath.Join(params.Dir, defaultSchemaFilename)
 	source := fmt.Sprintf("%s (schema built from '%s')", defaultCmd, filepath.Base(fileMap[params.DefaultEnv]))
 	if err := func() (err error) {
@@ -141,7 +141,7 @@ func Generate(files []string, params types.Params) ([]string, error) {
 		// Check of schema of this config does conform the the global schema
 		// If is has additional fields or fields with different schema themselves,
 		// it fails
-		var configSchema types.SchemaMap
+		var configSchema models.SchemaMap
 		if configSchema, err = writers.WriteAndReturnSchema(util.NoopWriter{}, data); err != nil {
 			return nil, err
 		}

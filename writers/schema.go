@@ -7,7 +7,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/models"
 	u "github.com/theliebeskind/genfig/util"
 )
 
@@ -16,7 +16,7 @@ const (
 )
 
 //WriteAndReturnSchema writes
-func WriteAndReturnSchema(w io.Writer, c map[string]interface{}) (s types.SchemaMap, err error) {
+func WriteAndReturnSchema(w io.Writer, c map[string]interface{}) (s models.SchemaMap, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = u.RecoverError(r)
@@ -24,7 +24,7 @@ func WriteAndReturnSchema(w io.Writer, c map[string]interface{}) (s types.Schema
 		}
 	}()
 
-	s = types.SchemaMap{}
+	s = models.SchemaMap{}
 	// using NoopWriter since top level is not needed
 	WriteSchema(u.NoopWriter{}, defaultSchemaRootName, c, s, 0)
 
@@ -52,7 +52,7 @@ func WriteAndReturnSchema(w io.Writer, c map[string]interface{}) (s types.Schema
 }
 
 //WriteSchema writes
-func WriteSchema(w io.Writer, k string, v interface{}, s types.SchemaMap, l int) bool {
+func WriteSchema(w io.Writer, k string, v interface{}, s models.SchemaMap, l int) bool {
 	if l > maxLevel {
 		panic(fmt.Errorf("Maximum of %d levels exceeded", maxLevel))
 	}
@@ -61,7 +61,7 @@ func WriteSchema(w io.Writer, k string, v interface{}, s types.SchemaMap, l int)
 	isStruct := WriteSchemaType(b, n, v, s, l)
 
 	n = strings.Replace(n, "_", "", -1)
-	s[n] = types.Schema{
+	s[n] = models.Schema{
 		IsStruct: isStruct,
 		Content:  b.String(),
 		Path:     k,
@@ -73,7 +73,7 @@ func WriteSchema(w io.Writer, k string, v interface{}, s types.SchemaMap, l int)
 
 // WriteSchemaType the type text to a writer and returns, if type is a struct or not
 //WriteSchemaType writes
-func WriteSchemaType(w io.Writer, p string, v interface{}, s types.SchemaMap, l int) (isStruct bool) {
+func WriteSchemaType(w io.Writer, p string, v interface{}, s models.SchemaMap, l int) (isStruct bool) {
 	switch v.(type) {
 	case map[string]interface{}:
 		isStruct = true

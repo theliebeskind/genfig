@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/models"
 
 	"github.com/theliebeskind/genfig/util"
 	u "github.com/theliebeskind/genfig/util"
@@ -17,7 +17,7 @@ var (
 )
 
 //WriteConfig writes
-func WriteConfig(w io.Writer, s types.SchemaMap, config map[string]interface{}, def map[string]interface{}, env string) (err error) {
+func WriteConfig(w io.Writer, s models.SchemaMap, config map[string]interface{}, def map[string]interface{}, env string) (err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			err = u.RecoverError(r)
@@ -46,7 +46,7 @@ func WriteConfig(w io.Writer, s types.SchemaMap, config map[string]interface{}, 
 }
 
 //WriteConfigLine writes
-func WriteConfigLine(w io.Writer, p string, k string, v interface{}, o interface{}, s types.SchemaMap, l int) {
+func WriteConfigLine(w io.Writer, p string, k string, v interface{}, o interface{}, s models.SchemaMap, l int) {
 	if l > maxLevel {
 		panic(fmt.Errorf("Maximum of %d levels exceeded", maxLevel))
 	}
@@ -66,7 +66,7 @@ func WriteConfigLine(w io.Writer, p string, k string, v interface{}, o interface
 }
 
 //WriteConfigValue writes
-func WriteConfigValue(w io.Writer, p string, v interface{}, o interface{}, s types.SchemaMap, l int) {
+func WriteConfigValue(w io.Writer, p string, v interface{}, o interface{}, s models.SchemaMap, l int) {
 	switch v.(type) {
 	case map[string]interface{}:
 		w.Write(u.B(p + "{" + nl))

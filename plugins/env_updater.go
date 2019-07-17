@@ -5,17 +5,17 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/models"
 )
 
 type envUpdaterPlugin struct {
-	s   types.SchemaMap
+	s   models.SchemaMap
 	tpl *template.Template
 }
 
 var (
 	envUpdater = envUpdaterPlugin{
-		s: types.SchemaMap{},
+		s: models.SchemaMap{},
 		tpl: template.Must(template.
 			New("envUpdater").
 			Funcs(template.FuncMap{
@@ -111,7 +111,7 @@ func (p *envUpdaterPlugin) GetInitCall() (string, bool) {
 }
 
 // SetSchemaMap sets the schema to be used when WriteTo is called
-func (p *envUpdaterPlugin) SetSchemaMap(s types.SchemaMap) {
+func (p *envUpdaterPlugin) SetSchemaMap(s models.SchemaMap) {
 	p.s = s
 }
 
