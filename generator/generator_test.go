@@ -71,7 +71,7 @@ func Test_Generate(t *testing.T) {
 		{"additional field(s) to default", args{goodConfigFiles, models.Params{DefaultEnv: "local"}}, true},
 		{"non conformant value to default", args{nonconformatnConfigFiles, models.Params{}}, true},
 		{"existing files, no dir", args{goodConfigFiles, models.Params{}}, false},
-		{"existing files with dir", args{goodConfigFiles, models.Params{Dir: filepath.Clean("../out")}}, false},
+		{"existing files with dir", args{goodConfigFiles, models.Params{Dir: "config"}}, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
