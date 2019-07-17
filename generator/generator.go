@@ -54,6 +54,11 @@ func Generate(files []string, params types.Params) ([]string, error) {
 		return nil, errors.New("No files to generate from")
 	}
 
+	if !filepath.IsAbs(params.Dir) {
+		wd, _ := os.Getwd()
+		params.Dir = filepath.Join(wd, params.Dir)
+	}
+
 	envs := map[string]string{}
 	envMap := make(map[string]map[string]interface{})
 	fileMap := make(map[string]string)
