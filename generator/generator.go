@@ -101,6 +101,8 @@ func Generate(files []string, params models.Params) ([]string, error) {
 	}
 
 	if err := os.MkdirAll(params.Dir, 0777); params.Dir != "" && err != nil {
+		wd, _ := os.Getwd()
+		fmt.Printf("Could not create/ensure target dir %s (cwd is %s): %v", params.Dir, wd, err)
 		return nil, err
 	}
 
