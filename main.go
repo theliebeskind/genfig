@@ -83,7 +83,7 @@ func run() {
 
 	fmt.Println("\nFormatting generade code with gofmt ...")
 	if err := exec.Command("gofmt", "-w", ".").Run(); err != nil {
-		fmt.Sprintf("\nCould not format code: %v, continuing anyway.", err)
+		fmt.Printf("\nCould not format code: %v, continuing anyway.", err)
 	}
 
 	fmt.Printf("\nSuccessfully generated %d files: %s\n", len(gofiles), strings.Join(gofiles, ", "))
