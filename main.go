@@ -4,20 +4,21 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
+
+	"go/parser"
+	"go/token"
 
 	"github.com/theliebeskind/genfig/generator"
 
-	"github.com/theliebeskind/genfig/types"
+	"github.com/theliebeskind/genfig/models"
 	"github.com/theliebeskind/genfig/util"
 )
 
 // PROJECT is the name of this project
 var PROJECT = "genfig"
-
-var (
-	dir = flag.String("dir", "config", "directory to write generated files into")
-)
 
 func init() {
 	flag.Usage = func() {
@@ -35,11 +36,22 @@ func main() {
 			os.Exit(1)
 		}
 	}()
-	exec()
+	run()
 }
 
-func exec() {
+func run() {
+	var (
+		help = flag.Bool("help", false, "print this usage help")
+		dir  = flag.String("dir", "./config", "directory to write generated files into")
+	)
+
 	flag.Parse()
+
+	if *help {
+		flag.Usage()
+		return
+	}
+
 	args := flag.Args()
 	if len(args) == 0 {
 		args = []string{"*"}
@@ -52,7 +64,7 @@ func exec() {
 		panic("No input files found")
 	}
 
-	params := types.Params{
+	params := models.Params{
 		Dir: *dir,
 	}
 	fmt.Printf("Generating from files: %s\n", strings.Join(files, ", "))
@@ -61,5 +73,18 @@ func exec() {
 	if err != nil {
 		panic(fmt.Sprintf("%v", err))
 	}
-	fmt.Printf("Successfully generated: %s", strings.Join(gofiles, ", "))
+
+	fmt.Println("\nChecking generaded code ...")
+	path, _ := filepath.Abs(*dir)
+	fset := token.NewFileSet()
+	if _, err := parser.ParseDir(fset, path, nil, 0); err != nil {
+		panic(fmt.Sprintf("At least one error in generated code: %v", err))
+	}
+
+	fmt.Println("\nFormatting generade code with gofmt ...")
+	if err := exec.Command("gofmt", "-w", ".").Run(); err != nil {
+		panic(fmt.Sprintf("Could not format code: %v", err))
+	}
+
+	fmt.Printf("\nSuccessfully generated %d files: %s\n", len(gofiles), strings.Join(gofiles, ", "))
 }
