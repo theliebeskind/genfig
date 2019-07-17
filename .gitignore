@@ -17,3 +17,6 @@ fixtures/**/*.go
 .DS_Store
 
 bin/**/*
+
+coverage.txt
+results.xml
