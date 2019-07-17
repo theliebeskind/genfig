@@ -12,11 +12,24 @@ import (
 	"github.com/theliebeskind/genfig/util"
 )
 
-const (
-	fixturesDir = "../fixtures/"
+var (
+	fixturesDir, _ = filepath.Abs("../fixtures")
 )
 
 func Test_ResolveGlobs(t *testing.T) {
+	tmpDir, _ := ioutil.TempDir("", "genifig")
+	defer os.RemoveAll(tmpDir)
+
+	cwd, _ := os.Getwd()
+	defer os.Chdir(cwd)
+	_ = os.Chdir(tmpDir)
+
+	ioutil.WriteFile("a.x", []byte{}, 0777)
+	ioutil.WriteFile("b.x", []byte{}, 0777)
+	ioutil.WriteFile("c.y", []byte{}, 0777)
+	os.MkdirAll("sub", 0777)
+	ioutil.WriteFile("sub/d.y", []byte{}, 0777)
+
 	type args struct {
 		globs []string
 	}
@@ -35,8 +48,7 @@ func Test_ResolveGlobs(t *testing.T) {
 		{"multiple globs, unique", args{[]string{"a.*", "b.*"}}, []string{"a.x", "b.x"}},
 		{"multiple globs, not unique", args{[]string{"a.*", "*.x"}}, []string{"a.x", "b.x"}},
 	}
-	cwd, _ := os.Getwd()
-	_ = os.Chdir(filepath.Join(fixturesDir, "/dir"))
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := util.ResolveGlobs(tt.args.globs...)
@@ -45,7 +57,6 @@ func Test_ResolveGlobs(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
-	_ = os.Chdir(cwd)
 }
 
 func Test_MapString(t *testing.T) {
@@ -105,11 +116,13 @@ func Test_ReduceStrings(t *testing.T) {
 	}
 }
 
-func TestCleanDir(t *testing.T) {
+func Test_CleanDir(t *testing.T) {
+	tmpDir, _ := ioutil.TempDir("", "genfig")
+	defer os.RemoveAll(tmpDir)
 	dir := "clean"
 	cwd, _ := os.Getwd()
-	os.MkdirAll(filepath.Join(fixturesDir, dir), 0777)
-	os.Chdir(filepath.Join(fixturesDir, dir))
+	os.MkdirAll(filepath.Join(tmpDir, dir), 0777)
+	os.Chdir(filepath.Join(tmpDir, dir))
 	defer os.Chdir(cwd)
 
 	ioutil.WriteFile("a.txt", []byte{}, 0777)
