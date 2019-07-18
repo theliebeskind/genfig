@@ -1,3 +1,5 @@
+//go:generate sh -c "printf 'package main\n\nconst version = \"%s\"\n' $(git describe --tags `git rev-list --tags --max-count=1`) > version.go"
+
 package main
 
 import (
