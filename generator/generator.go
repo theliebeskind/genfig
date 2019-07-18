@@ -55,12 +55,7 @@ func Generate(files []string, params models.Params) ([]string, error) {
 	}
 
 	if !filepath.IsAbs(params.Dir) {
-		wd, err := os.Getwd()
-		if err != nil {
-			fmt.Printf("Could not get CWD: %v", err)
-		} else {
-			params.Dir = filepath.Join(wd, params.Dir)
-		}
+		params.Dir, _ = filepath.Abs(params.Dir)
 	}
 
 	envs := map[string]string{}
@@ -105,8 +100,6 @@ func Generate(files []string, params models.Params) ([]string, error) {
 	}
 
 	if err := os.MkdirAll(params.Dir, 0777); params.Dir != "" && err != nil {
-		wd, _ := os.Getwd()
-		fmt.Printf("Could not create/ensure target dir %s (cwd is %s): %v", params.Dir, wd, err)
 		return nil, err
 	}
 
