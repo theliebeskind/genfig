@@ -1,4 +1,4 @@
-//go:generate sh -c "printf 'package main\n\nconst version = \"%s\"\n' $(git describe --tags `git rev-list --tags --max-count=1`) > version.go"
+//go:generate sh -c "printf 'package main\n\nfunc init() {\n\tversion = \"%s\"\n}\n' $(cat VERSION) > version.go"
 
 package main
 
@@ -19,12 +19,13 @@ import (
 	"github.com/theliebeskind/genfig/util"
 )
 
-// PROJECT is the name of this project
-var PROJECT = "genfig"
+const project = "genfig"
+
+var version = "v0.0.0-dev"
 
 func init() {
 	flag.Usage = func() {
-		fmt.Printf("Usage of %s:\n", PROJECT)
+		fmt.Printf("Usage of %s %s:\n", project, version)
 		flag.PrintDefaults()
 	}
 }
@@ -43,13 +44,18 @@ func main() {
 
 func run() {
 	var (
-		help = flag.Bool("help", false, "print this usage help")
-		dir  = flag.String("dir", "./config", "directory to write generated files into")
+		helpFlag    = flag.Bool("help", false, "print this usage help")
+		versionFlag = flag.Bool("version", false, "print version")
+		dir         = flag.String("dir", "./config", "directory to write generated files into")
 	)
 
 	flag.Parse()
 
-	if *help {
+	if *versionFlag {
+		fmt.Printf("%s %s", project, version)
+		return
+	}
+	if *helpFlag {
 		flag.Usage()
 		return
 	}
