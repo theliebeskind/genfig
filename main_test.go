@@ -51,7 +51,6 @@ func Test_run(t *testing.T) {
 				require.NotPanics(t, run)
 			}
 			os.Args = origArgs
-			os.RemoveAll(dir)
 		})
 	}
 }
