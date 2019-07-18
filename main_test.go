@@ -34,6 +34,7 @@ func Test_run(t *testing.T) {
 		shouldPanic bool
 	}{
 		{"no args", []string{}, true},
+		{"version", []string{"--version"}, false},
 		{"help", []string{"--help"}, false},
 		{"without dir, no config files", []string{"*"}, true},
 		{"with dir, no config files", []string{"-dir", out, "*"}, true},
