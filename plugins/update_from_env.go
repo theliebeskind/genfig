@@ -5,19 +5,19 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/theliebeskind/go-genfig/types"
+	"github.com/theliebeskind/genfig/models"
 )
 
-type envUpdaterPlugin struct {
-	s   types.SchemaMap
+type updateFromEnvPlugin struct {
+	s   models.SchemaMap
 	tpl *template.Template
 }
 
 var (
-	envUpdater = envUpdaterPlugin{
-		s: types.SchemaMap{},
+	updateFromEnv = updateFromEnvPlugin{
+		s: models.SchemaMap{},
 		tpl: template.Must(template.
-			New("envUpdater").
+			New("updateFromEnv").
 			Funcs(template.FuncMap{
 				"upper": strings.ToUpper,
 				"title": strings.Title,
@@ -101,23 +101,23 @@ func parseInterfaceSlice(s string) (a []interface{}, err error) {
 
 func init() {
 	// "register" plugin
-	Plugins["env_updater"] = &envUpdater
+	Plugins["env_updater"] = &updateFromEnv
 }
 
 // GetInitCall returns the availibility and the string of the
 // function to be called on init
-func (p *envUpdaterPlugin) GetInitCall() (string, bool) {
+func (p *updateFromEnvPlugin) GetInitCall() (string, bool) {
 	return "Current.UpdateFromEnv()", true
 }
 
 // SetSchemaMap sets the schema to be used when WriteTo is called
-func (p *envUpdaterPlugin) SetSchemaMap(s types.SchemaMap) {
+func (p *updateFromEnvPlugin) SetSchemaMap(s models.SchemaMap) {
 	p.s = s
 }
 
 // WriteTo performs the acutal writing to a buffer (or io.Writer).
 // For this plugin, the template is simply "rendered" into the writer.
-func (p *envUpdaterPlugin) WriteTo(w io.Writer) (l int64, err error) {
+func (p *updateFromEnvPlugin) WriteTo(w io.Writer) (l int64, err error) {
 	err = p.tpl.Execute(w, p.s)
 	return
 }

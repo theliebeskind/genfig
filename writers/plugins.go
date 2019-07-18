@@ -4,17 +4,17 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/theliebeskind/go-genfig/plugins"
+	"github.com/theliebeskind/genfig/plugins"
 
-	"github.com/theliebeskind/go-genfig/types"
+	"github.com/theliebeskind/genfig/models"
 )
 
 const (
 	pluginPrefix = "plugin_"
 )
 
-//WritePlugins writes
-func WritePlugins(schema types.SchemaMap, dir string, pkg string, cmd string, calls map[string]string) ([]string, error) {
+//WritePlugins writes a plugin file for each plugin
+func WritePlugins(schema models.SchemaMap, dir string, pkg string, cmd string, calls map[string]string) ([]string, error) {
 	files := []string{}
 	for n, p := range plugins.Plugins {
 		p.SetSchemaMap(schema)

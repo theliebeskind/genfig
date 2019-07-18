@@ -9,12 +9,12 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/theliebeskind/go-genfig/writers"
+	"github.com/theliebeskind/genfig/writers"
 
-	"github.com/theliebeskind/go-genfig/types"
+	"github.com/theliebeskind/genfig/models"
 
-	"github.com/theliebeskind/go-genfig/parsers"
-	"github.com/theliebeskind/go-genfig/util"
+	"github.com/theliebeskind/genfig/parsers"
+	"github.com/theliebeskind/genfig/util"
 )
 
 const (
@@ -48,10 +48,14 @@ var (
 )
 
 // Generate generates the go config files
-func Generate(files []string, params types.Params) ([]string, error) {
+func Generate(files []string, params models.Params) ([]string, error) {
 	var err error
 	if len(files) == 0 {
 		return nil, errors.New("No files to generate from")
+	}
+
+	if !filepath.IsAbs(params.Dir) {
+		params.Dir, _ = filepath.Abs(params.Dir)
 	}
 
 	envs := map[string]string{}
@@ -102,7 +106,7 @@ func Generate(files []string, params types.Params) ([]string, error) {
 	gofiles := []string{}
 
 	// write schemafile
-	var schema types.SchemaMap
+	var schema models.SchemaMap
 	schemaFileName := filepath.Join(params.Dir, defaultSchemaFilename)
 	source := fmt.Sprintf("%s (schema built from '%s')", defaultCmd, filepath.Base(fileMap[params.DefaultEnv]))
 	if err := func() (err error) {
@@ -127,7 +131,12 @@ func Generate(files []string, params types.Params) ([]string, error) {
 
 	// write config files
 	for env, data := range envMap {
-		out := defaultConfigFilePrefix + env + ".go"
+		out := defaultConfigFilePrefix
+		if env == "test" {
+			out += "test_.go"
+		} else {
+			out += env + ".go"
+		}
 		path := filepath.Join(params.Dir, out)
 		source := fmt.Sprintf("%s (config built by merging '%s' and '%s')", defaultCmd, filepath.Base(fileMap[params.DefaultEnv]), filepath.Base(fileMap[env]))
 		name := strings.ReplaceAll(strings.Title(strings.ReplaceAll(env, "_", ".")), ".", "")
@@ -136,7 +145,7 @@ func Generate(files []string, params types.Params) ([]string, error) {
 		// Check of schema of this config does conform the the global schema
 		// If is has additional fields or fields with different schema themselves,
 		// it fails
-		var configSchema types.SchemaMap
+		var configSchema models.SchemaMap
 		if configSchema, err = writers.WriteAndReturnSchema(util.NoopWriter{}, data); err != nil {
 			return nil, err
 		}

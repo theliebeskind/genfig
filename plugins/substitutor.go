@@ -5,17 +5,17 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/theliebeskind/go-genfig/types"
+	"github.com/theliebeskind/genfig/models"
 )
 
 type substitutorPlugin struct {
-	s   types.SchemaMap
+	s   models.SchemaMap
 	tpl *template.Template
 }
 
 var (
 	substitutor = substitutorPlugin{
-		s: types.SchemaMap{},
+		s: models.SchemaMap{},
 		tpl: template.Must(template.
 			New("substitutor").
 			Funcs(template.FuncMap{
@@ -101,7 +101,7 @@ func (p *substitutorPlugin) GetInitCall() (string, bool) {
 }
 
 // SetSchemaMap sets the schema to be used when WriteTo is called
-func (p *substitutorPlugin) SetSchemaMap(s types.SchemaMap) {
+func (p *substitutorPlugin) SetSchemaMap(s models.SchemaMap) {
 	p.s = s
 }
 

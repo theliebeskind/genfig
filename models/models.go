@@ -1,4 +1,4 @@
-package types
+package models
 
 // Schema defines the schema
 type Schema struct {

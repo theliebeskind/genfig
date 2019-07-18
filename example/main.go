@@ -1,11 +1,12 @@
-//go:generate go run ../ ../fixtures/default.yml ../fixtures/*.yaml ../fixtures/*.toml ../fixtures/.env*
+//go:generate rm -rf config
+//go:generate go run ../ --dir config ../fixtures/configs/default.yml ../fixtures/configs/*.yaml ../fixtures/configs/*.json ../fixtures/configs/*.toml ../fixtures/configs/.env*
 
 package main
 
 import (
 	"fmt"
 
-	"github.com/theliebeskind/go-genfig/example/config"
+	"github.com/theliebeskind/genfig/example/config"
 )
 
 func main() {
@@ -14,4 +15,6 @@ func main() {
 	fmt.Println(config.Current.Secrets)
 	fmt.Println(config.Current.Server.Port)
 	fmt.Println(config.Current.Db)
+
+	fmt.Println(config.Envs.Test.Version)
 }

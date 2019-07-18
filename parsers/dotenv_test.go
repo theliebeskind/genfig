@@ -6,12 +6,13 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	. "github.com/theliebeskind/go-genfig/parsers"
+	. "github.com/theliebeskind/genfig/parsers"
 )
 
 const (
 	complexDotenv = `
-A=b
+# this is a comment
+A=a b
 C_D=1
 C_E=2
 F=[2,"3","g"]
@@ -20,7 +21,7 @@ G=0.5
 )
 
 var (
-	complexDotenvResult = map[string]interface{}{"a": "b", "c": map[string]interface{}{"d": int64(1), "e": int64(2)}, "f": []interface{}{float64(2), "3", "g"}, "g": 0.5}
+	complexDotenvResult = map[string]interface{}{"a": "a b", "c": map[string]interface{}{"d": int64(1), "e": int64(2)}, "f": []interface{}{float64(2), "3", "g"}, "g": 0.5}
 )
 
 func Test_Dotenv(t *testing.T) {
@@ -35,7 +36,14 @@ func Test_Dotenv(t *testing.T) {
 	}{
 		{"empty data", args{}, nil, true},
 		{"invalid data", args{[]byte("foobar´?")}, nil, true},
+		{"invalid key", args{[]byte("fooba@=12")}, nil, true},
 		{"valid dotenv", args{[]byte("A=1")}, map[string]interface{}{"a": int64(1)}, false},
+		{"also valid dotenv", args{[]byte("A: 1")}, map[string]interface{}{"a": int64(1)}, false},
+		{"valid nested dotenv", args{[]byte("A_B=1")}, map[string]interface{}{"a": map[string]interface{}{"b": int64(1)}}, false},
+		{"another valid nested dotenv", args{[]byte("A-B=1")}, map[string]interface{}{"a": map[string]interface{}{"b": int64(1)}}, false},
+		{"double occurency map on basic", args{[]byte("A=1\nA_A=2")}, nil, true},
+		{"double occurency basic on map", args{[]byte("A_A=2\nA=1")}, nil, true},
+		{"nested double occurency", args{[]byte("A_A_A=2\nA_A=1")}, nil, true},
 		{"complex dotenv", args{[]byte(complexDotenv)}, complexDotenvResult, false},
 	}
 	s := DotenvStrategy{}
