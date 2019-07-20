@@ -33,8 +33,7 @@ func init() {
 func main() {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Printf("\nERROR: %v\n", r)
-			fmt.Println()
+			fmt.Printf("\nERROR: %v\n\n", r)
 			flag.Usage()
 			os.Exit(1)
 		}
