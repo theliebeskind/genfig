@@ -12,10 +12,6 @@ import (
 	u "github.com/theliebeskind/genfig/util"
 )
 
-var (
-	indents = strings.Repeat(indent, maxLevel+1)
-)
-
 //WriteConfig writes
 func WriteConfig(w io.Writer, s models.SchemaMap, config map[string]interface{}, def map[string]interface{}, env string) (err error) {
 	defer func() {
