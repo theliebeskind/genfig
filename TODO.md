@@ -4,3 +4,4 @@
 - [ ] Comment generated code
 - [ ] Extend testcases
 - [ ] Write comprehensive readme
+- [ ] Re-structure generator
