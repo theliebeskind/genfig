@@ -44,19 +44,31 @@ var (
 	"strconv"
 )
 
-func (c *Config) UpdateFromEnv() {
+var (
+	_ = os.LookupEnv
+	_ = fmt.Sprintf
+	_ = json.Marshal
+)
+
+func (c *Config) UpdateFromEnv() []error {
 	var val string
 	var exists bool
+	var errors = []error{}
 {{range $_, $v := .}}{{if not $v.IsStruct}}
 	if val, exists = os.LookupEnv("{{cleanPrefixEnv (upper $v.Path)}}"); exists { {{if eq $v.Content "string"}}
 		c.{{makePath $v.Path}} = val {{else}}
 		if v, err := parse{{title (renameSlice $v.Content)}}(val); err == nil {
 			c.{{makePath $v.Path}} = v
 		} else {
-			fmt.Printf("Genfig: could not parse {{$v.Content}} from {{upper $v.Path}} ('%s')\n", val)
+			errors = append(errors, fmt.Errorf("Genfig: could not parse {{$v.Content}} from {{upper $v.Path}} ('%s')\n", val))
 		} {{end}}
 	}
 {{end}}{{end}}
+	if len(errors) == 0 {
+		return nil
+	} else {
+		return errors
+	}
 }
 
 // these are wrappers, so that they can
@@ -107,7 +119,7 @@ func init() {
 // GetInitCall returns the availibility and the string of the
 // function to be called on init
 func (p *updateFromEnvPlugin) GetInitCall() (string, bool) {
-	return "Current.UpdateFromEnv()", true
+	return "_ = Current.UpdateFromEnv()", true
 }
 
 // SetSchemaMap sets the schema to be used when WriteTo is called
