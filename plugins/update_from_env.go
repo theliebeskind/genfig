@@ -101,7 +101,7 @@ func parseInterfaceSlice(s string) (a []interface{}, err error) {
 
 func init() {
 	// "register" plugin
-	Plugins["env_updater"] = &updateFromEnv
+	Plugins["update_from_env"] = &updateFromEnv
 }
 
 // GetInitCall returns the availibility and the string of the
