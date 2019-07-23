@@ -19,8 +19,8 @@ var (
 		tpl: template.Must(template.
 			New("writeToEnv").
 			Funcs(template.FuncMap{
-				"upper": strings.ToUpper,
-				"title": strings.Title,
+				"upper":     strings.ToUpper,
+				"hasPrefix": strings.HasPrefix,
 				// Remove root (usually "Config_") from env var name
 				"cleanPrefixEnv": func(s string) string {
 					return strings.Join(strings.Split(s, "_")[1:], "_")
@@ -29,8 +29,6 @@ var (
 				"makePath": func(s string) string {
 					return strings.Join(strings.Split(s, "_")[1:], ".")
 				},
-				// HasPrefix func
-				"hasPrefix": strings.HasPrefix,
 			}).
 			Parse(`import (
 	"fmt"
