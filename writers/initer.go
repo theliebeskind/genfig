@@ -8,6 +8,12 @@ import (
 var (
 	initTpl = template.Must(template.New("init").Parse(`import (
 	"os"
+	"fmt"
+)
+
+var (
+	_ = os.Getenv
+	_ = fmt.Printf
 )
 
 // Current is the current config, selected by the curren env and

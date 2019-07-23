@@ -17,4 +17,6 @@ func main() {
 	fmt.Println(config.Current.Db)
 
 	fmt.Println(config.Envs.Test.Version)
+
+	fmt.Println(config.Current.Map())
 }

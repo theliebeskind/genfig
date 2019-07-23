@@ -32,6 +32,8 @@ var (
 	"strings"
 )
 
+var _ = strings.Contains
+
 const (
 	maxSubstitutionIteraions = 5
 )
