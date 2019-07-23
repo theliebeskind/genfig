@@ -119,7 +119,7 @@ func init() {
 // GetInitCall returns the availibility and the string of the
 // function to be called on init
 func (p *updateFromEnvPlugin) GetInitCall() (string, bool) {
-	return "_ = Current.UpdateFromEnv()", true
+	return "if errs := Current.UpdateFromEnv(); errs != nil {\n\tfmt.Println(errs)\n}", true
 }
 
 // SetSchemaMap sets the schema to be used when WriteTo is called
