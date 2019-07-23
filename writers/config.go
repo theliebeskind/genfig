@@ -6,6 +6,8 @@ import (
 	"io"
 	"strings"
 
+	"github.com/imdario/mergo"
+
 	"github.com/theliebeskind/genfig/models"
 
 	"github.com/theliebeskind/genfig/util"
@@ -31,6 +33,12 @@ func WriteConfig(w io.Writer, s models.SchemaMap, config map[string]interface{},
 
 	// write actual config
 	WriteConfigValue(buf, defaultSchemaRootName, def, config, s, 1)
+
+	merged := def
+	if err := mergo.Merge(&merged, config, mergo.WithOverride); err != nil {
+		panic(err)
+	}
+	buf.Write(u.B(nl + indent + "Envs." + strings.Title(env) + "._map = " + fmt.Sprintf("%#v", merged)))
 
 	// closing bracket of init func
 	buf.Write(u.B(nl + "}" + nl))
