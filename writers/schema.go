@@ -89,6 +89,10 @@ func WriteSchemaType(w io.Writer, p string, v interface{}, s models.SchemaMap, l
 			}
 			buf.Reset()
 		}
+		// inject _map
+		if l == 0 {
+			w.Write(u.B(indent + "_map map[string]interface{} " + nl))
+		}
 		w.Write(u.B("}" + nl))
 	case map[interface{}]interface{}:
 		isStruct = true

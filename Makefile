@@ -37,3 +37,4 @@ run:
 .PHONY: version
 version:
 	git tag `cat VERSION`
+	git push origin `cat VERSION`
