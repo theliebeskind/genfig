@@ -17,4 +17,7 @@ func main() {
 	fmt.Println(config.Current.Db)
 
 	fmt.Println(config.Envs.Test.Version)
+
+	config.Envs.Local.WriteToEnv()
+	config.Current.UpdateFromEnv()
 }
