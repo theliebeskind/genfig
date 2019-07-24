@@ -52,7 +52,9 @@ var (
 
 func (c *Config) UpdateFromEnv() []error {
 	var val string
+	_ = val
 	var exists bool
+	_ = exists
 	var errors = []error{}
 {{range $_, $v := .}}{{if not $v.IsStruct}}
 	if val, exists = os.LookupEnv("{{cleanPrefixEnv (upper $v.Path)}}"); exists { {{if eq $v.Content "string"}}

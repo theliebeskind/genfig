@@ -44,6 +44,7 @@ var (
 
 func (c *Config) WriteToEnv() {
 	var buf []byte
+	_ = buf
 {{range $_, $v := .}}{{if not $v.IsStruct}}
 	{{if hasPrefix $v.Content "[]"}}
 	buf, _ = json.Marshal(c.{{makePath $v.Path}})
