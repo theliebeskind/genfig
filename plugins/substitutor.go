@@ -59,6 +59,7 @@ func (c *Config) Substitute() bool {
 		if c.substitute() == 0 {
 			return true
 		}
+		run += 1
 	}
 }
 
