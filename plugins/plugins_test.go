@@ -26,6 +26,14 @@ func Test_All(t *testing.T) {
 			Content: "int",
 			Path:    "BC",
 		},
+		"D": models.Schema{
+			Content: "[]interface {}",
+			Path:    "D",
+		},
+		"E": models.Schema{
+			Content: "[]map[interface {}]interface {}",
+			Path:    "D",
+		},
 	}
 	for _, p := range plugins.Plugins {
 		p.SetSchemaMap(s)

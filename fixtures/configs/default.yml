@@ -19,3 +19,9 @@ longDesc:
   en: Long description
   de: Lange Beschreibung
 wip: true
+emptyArray: []
+list:
+- a: 1
+  b: 2
+- a: 3
+  b: 4

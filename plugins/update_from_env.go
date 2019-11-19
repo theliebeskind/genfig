@@ -2,6 +2,7 @@ package plugins
 
 import (
 	"io"
+	"regexp"
 	"strings"
 	"text/template"
 
@@ -12,6 +13,10 @@ type updateFromEnvPlugin struct {
 	s   models.SchemaMap
 	tpl *template.Template
 }
+
+var (
+	sliceMatcher = regexp.MustCompile(`^\[\](\w+)`)
+)
 
 var (
 	updateFromEnv = updateFromEnvPlugin{
@@ -31,8 +36,8 @@ var (
 				},
 				// Substitute []*type* with *type*Slice
 				"renameSlice": func(s string) string {
-					if strings.HasPrefix(s, "[]") {
-						return s[2:] + "Slice"
+					if found := sliceMatcher.FindStringSubmatch(s); len(found) > 0 {
+						return found[1] + "Slice"
 					}
 					return s
 				},
@@ -107,6 +112,11 @@ func parseFloat64Slice(s string) (a []float64, err error) {
 }
 
 func parseInterfaceSlice(s string) (a []interface{}, err error) {
+	err = json.Unmarshal([]byte(s), &a)
+	return
+}
+
+func parseMapSlice(s string) (a []map[interface{}]interface{}, err error) {
 	err = json.Unmarshal([]byte(s), &a)
 	return
 }
