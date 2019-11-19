@@ -1,4 +1,4 @@
-module github.com/thclodes/genfig
+module github.com/thlcodes/genfig
 
 go 1.12
 

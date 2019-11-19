@@ -9,12 +9,12 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/thclodes/genfig/writers"
+	"github.com/thlcodes/genfig/writers"
 
-	"github.com/thclodes/genfig/models"
+	"github.com/thlcodes/genfig/models"
 
-	"github.com/thclodes/genfig/parsers"
-	"github.com/thclodes/genfig/util"
+	"github.com/thlcodes/genfig/parsers"
+	"github.com/thlcodes/genfig/util"
 )
 
 const (

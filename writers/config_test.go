@@ -4,12 +4,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/thclodes/genfig/writers"
+	"github.com/thlcodes/genfig/writers"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/thclodes/genfig/models"
-	"github.com/thclodes/genfig/util"
+	"github.com/thlcodes/genfig/models"
+	"github.com/thlcodes/genfig/util"
 )
 
 func Test_WriteConfig(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/thclodes/genfig/util"
+	"github.com/thlcodes/genfig/util"
 )
 
 var (

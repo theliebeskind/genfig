@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/thclodes/genfig/models"
+	"github.com/thlcodes/genfig/models"
 )
 
 type substitutorPlugin struct {

@@ -13,10 +13,10 @@ import (
 	"go/parser"
 	"go/token"
 
-	"github.com/thclodes/genfig/generator"
+	"github.com/thlcodes/genfig/generator"
 
-	"github.com/thclodes/genfig/models"
-	"github.com/thclodes/genfig/util"
+	"github.com/thlcodes/genfig/models"
+	"github.com/thlcodes/genfig/util"
 )
 
 const project = "genfig"

@@ -4,9 +4,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/thclodes/genfig/plugins"
+	"github.com/thlcodes/genfig/plugins"
 
-	"github.com/thclodes/genfig/models"
+	"github.com/thlcodes/genfig/models"
 )
 
 const (
