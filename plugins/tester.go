@@ -4,7 +4,7 @@ import (
 	"io"
 	"text/template"
 
-	"github.com/theliebeskind/genfig/models"
+	"github.com/thclodes/genfig/models"
 )
 
 type configTestPlugin struct {

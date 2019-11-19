@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/theliebeskind/genfig/models"
-	u "github.com/theliebeskind/genfig/util"
+	"github.com/thclodes/genfig/models"
+	u "github.com/thclodes/genfig/util"
 )
 
 const (

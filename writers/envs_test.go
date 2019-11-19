@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/theliebeskind/genfig/util"
-	"github.com/theliebeskind/genfig/writers"
+	"github.com/thclodes/genfig/util"
+	"github.com/thclodes/genfig/writers"
 )
 
 func Test_WriteEnvs(t *testing.T) {

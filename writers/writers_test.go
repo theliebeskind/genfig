@@ -1,6 +1,6 @@
 package writers_test
 
-import "github.com/theliebeskind/genfig/writers"
+import "github.com/thclodes/genfig/writers"
 
 const (
 	maxLevel = 5

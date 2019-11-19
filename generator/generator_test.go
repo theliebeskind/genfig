@@ -8,8 +8,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/theliebeskind/genfig/models"
-	"github.com/theliebeskind/genfig/util"
+	"github.com/thclodes/genfig/models"
+	"github.com/thclodes/genfig/util"
 )
 
 var (

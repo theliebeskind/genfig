@@ -8,10 +8,10 @@ import (
 
 	"github.com/imdario/mergo"
 
-	"github.com/theliebeskind/genfig/models"
+	"github.com/thclodes/genfig/models"
 
-	"github.com/theliebeskind/genfig/util"
-	u "github.com/theliebeskind/genfig/util"
+	"github.com/thclodes/genfig/util"
+	u "github.com/thclodes/genfig/util"
 )
 
 //WriteConfig writes

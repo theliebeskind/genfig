@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/theliebeskind/genfig/models"
+	"github.com/thclodes/genfig/models"
 )
 
 type writeToEnvPlugin struct {

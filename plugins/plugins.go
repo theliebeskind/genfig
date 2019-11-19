@@ -3,7 +3,7 @@ package plugins
 import (
 	"io"
 
-	"github.com/theliebeskind/genfig/models"
+	"github.com/thclodes/genfig/models"
 )
 
 // Plugin interface

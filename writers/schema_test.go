@@ -4,12 +4,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/theliebeskind/genfig/writers"
+	"github.com/thclodes/genfig/writers"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/theliebeskind/genfig/models"
-	"github.com/theliebeskind/genfig/util"
+	"github.com/thclodes/genfig/models"
+	"github.com/thclodes/genfig/util"
 )
 
 func Test_WriteSchema(t *testing.T) {

@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/theliebeskind/genfig/models"
-	"github.com/theliebeskind/genfig/plugins"
-	"github.com/theliebeskind/genfig/writers"
+	"github.com/thclodes/genfig/models"
+	"github.com/thclodes/genfig/plugins"
+	"github.com/thclodes/genfig/writers"
 )
 
 func Test_WritePlugins(t *testing.T) {

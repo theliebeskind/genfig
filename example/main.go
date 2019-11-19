@@ -6,7 +6,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/theliebeskind/genfig/example/config"
+	"github.com/thclodes/genfig/example/config"
 )
 
 func main() {

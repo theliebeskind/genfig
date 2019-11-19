@@ -5,10 +5,10 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/theliebeskind/genfig/models"
-	"github.com/theliebeskind/genfig/util"
+	"github.com/thclodes/genfig/models"
+	"github.com/thclodes/genfig/util"
 
-	"github.com/theliebeskind/genfig/plugins"
+	"github.com/thclodes/genfig/plugins"
 )
 
 func Test_All(t *testing.T) {

@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	mergo "github.com/imdario/mergo"
-	"github.com/theliebeskind/genfig/util"
+	"github.com/thclodes/genfig/util"
 )
 
 var (
