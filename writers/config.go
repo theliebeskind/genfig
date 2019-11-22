@@ -41,11 +41,9 @@ func WriteConfig(w io.Writer, s models.SchemaMap, config map[string]interface{},
 
 	merged := make(map[string]interface{})
 	copyMap(def, &merged)
-	fmt.Printf("copy: %v\n\n", merged)
 	if err := mergo.Merge(&merged, config, mergo.WithOverride); err != nil {
 		panic(err)
 	}
-	fmt.Printf("merged: %v\n\n", merged)
 
 	// write actual config
 	WriteConfigValue(buf, defaultSchemaRootName, merged, s, 1)
