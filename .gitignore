@@ -20,3 +20,5 @@ bin/**/*
 
 coverage.txt
 results.xml
+
+config
