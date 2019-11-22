@@ -14,7 +14,7 @@ func init() {
 			Uri:  "mongdb://localhos:27017/db",
 			User: "chuck",
 		},
-		EmptyArray: []interface{}{},
+		EmptyArray: []interface{}(nil),
 		List:       []map[interface{}]interface{}{map[interface{}]interface{}{"a": 1, "b": 2}, map[interface{}]interface{}{"a": 3, "b": 4}},
 		LongDesc: ConfigLongDesc{
 			De: "Lange Beschreibung",
@@ -32,5 +32,5 @@ func init() {
 		Version: "0.1.0",
 		Wip:     true,
 	}
-	Envs.Local._map = map[string]interface{}{"apis": map[interface{}]interface{}{"google": map[interface{}]interface{}{"uri": "google.com"}}, "db": map[interface{}]interface{}{"pass": "norris", "uri": "mongdb://localhos:27017/db", "user": "chuck"}, "emptyArray": []interface{}{}, "list": []interface{}{map[interface{}]interface{}{"a": 1, "b": 2}, map[interface{}]interface{}{"a": 3, "b": 4}}, "longDesc": map[interface{}]interface{}{"de": "Lange Beschreibung", "en": "Long description"}, "project": "genfig", "randomizer": map[interface{}]interface{}{"threshold": 0.12345}, "secrets": []interface{}{"ChuckNorriscanwinagameofConnectFourinonlythreemoves"}, "server": map[interface{}]interface{}{"host": "localhost", "port": 1212}, "version": "0.1.0", "wip": true}
+	Envs.Local._map = map[string]interface{}{"apis": map[interface{}]interface{}{"google": map[interface{}]interface{}{"uri": "google.com"}}, "db": map[interface{}]interface{}{"pass": "norris", "uri": "mongdb://localhos:27017/db", "user": "chuck"}, "emptyArray": []interface{}(nil), "list": []interface{}{map[interface{}]interface{}{"a": 1, "b": 2}, map[interface{}]interface{}{"a": 3, "b": 4}}, "longDesc": map[interface{}]interface{}{"de": "Lange Beschreibung", "en": "Long description"}, "project": "genfig", "randomizer": map[interface{}]interface{}{"threshold": 0.12345}, "secrets": []interface{}{"ChuckNorriscanwinagameofConnectFourinonlythreemoves"}, "server": map[interface{}]interface{}{"host": "localhost", "port": 1212}, "version": "0.1.0", "wip": true}
 }

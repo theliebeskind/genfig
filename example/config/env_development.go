@@ -10,11 +10,11 @@ func init() {
 			},
 		},
 		Db: ConfigDb{
-			Pass: "norris",
+			Pass: "",
 			Uri:  "mongdb://${db.user}:${db.pass}@remotedb:27018/dev-db",
-			User: "chuck",
+			User: "",
 		},
-		EmptyArray: []interface{}{},
+		EmptyArray: []interface{}(nil),
 		List:       []map[interface{}]interface{}{map[interface{}]interface{}{"a": 1, "b": 2}, map[interface{}]interface{}{"a": 3, "b": 4}},
 		LongDesc: ConfigLongDesc{
 			De: "Lange Beschreibung",
@@ -22,7 +22,7 @@ func init() {
 		},
 		Project: "genfig",
 		Randomizer: ConfigRandomizer{
-			Threshold: 0.12345,
+			Threshold: 0.75,
 		},
 		Secrets: []string{""},
 		Server: ConfigServer{
@@ -32,5 +32,5 @@ func init() {
 		Version: "1",
 		Wip:     true,
 	}
-	Envs.Development._map = map[string]interface{}{"apis": map[interface{}]interface{}{"google": map[interface{}]interface{}{"uri": "google.com"}}, "db": map[interface{}]interface{}{"pass": "norris", "uri": "mongdb://${db.user}:${db.pass}@remotedb:27018/dev-db", "user": "chuck"}, "emptyArray": []interface{}{}, "list": []interface{}{map[interface{}]interface{}{"a": 1, "b": 2}, map[interface{}]interface{}{"a": 3, "b": 4}}, "longDesc": map[interface{}]interface{}{"de": "Lange Beschreibung", "en": "Long description"}, "project": "genfig", "randomizer": map[interface{}]interface{}{"threshold": 0.12345}, "secrets": []interface{}{""}, "server": map[interface{}]interface{}{"host": "dev.mydomain.com", "port": 1234}, "version": "1", "wip": true}
+	Envs.Development._map = map[string]interface{}{"apis": map[interface{}]interface{}{"google": map[interface{}]interface{}{"uri": "google.com"}}, "db": map[interface{}]interface{}{"pass": "", "uri": "mongdb://${db.user}:${db.pass}@remotedb:27018/dev-db", "user": ""}, "emptyArray": []interface{}(nil), "list": []interface{}{map[interface{}]interface{}{"a": 1, "b": 2}, map[interface{}]interface{}{"a": 3, "b": 4}}, "longDesc": map[interface{}]interface{}{"de": "Lange Beschreibung", "en": "Long description"}, "project": "genfig", "randomizer": map[interface{}]interface{}{"threshold": 0.75}, "secrets": []interface{}{""}, "server": map[interface{}]interface{}{"host": "dev.mydomain.com", "port": 1234}, "version": "1", "wip": true}
 }

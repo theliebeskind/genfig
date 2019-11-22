@@ -3,17 +3,17 @@
 package config
 
 type Config struct {
-	Wip        bool
-	List       []map[interface{}]interface{}
-	Version    string
-	LongDesc   ConfigLongDesc
-	Db         ConfigDb
-	Secrets    []string
-	Randomizer ConfigRandomizer
 	Apis       ConfigApis
+	Db         ConfigDb
 	EmptyArray []interface{}
+	List       []map[interface{}]interface{}
+	LongDesc   ConfigLongDesc
 	Project    string
+	Randomizer ConfigRandomizer
+	Secrets    []string
 	Server     ConfigServer
+	Version    string
+	Wip        bool
 	_map       map[string]interface{}
 }
 
@@ -26,14 +26,14 @@ type ConfigApisGoogle struct {
 }
 
 type ConfigDb struct {
+	Pass string
 	Uri  string
 	User string
-	Pass string
 }
 
 type ConfigLongDesc struct {
-	En string
 	De string
+	En string
 }
 
 type ConfigRandomizer struct {
@@ -41,6 +41,6 @@ type ConfigRandomizer struct {
 }
 
 type ConfigServer struct {
-	Port int64
 	Host string
+	Port int64
 }
