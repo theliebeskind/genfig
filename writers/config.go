@@ -2,8 +2,10 @@ package writers
 
 import (
 	"bytes"
+	"encoding/gob"
 	"fmt"
 	"io"
+	"sort"
 	"strings"
 
 	"github.com/imdario/mergo"
@@ -13,6 +15,12 @@ import (
 	"github.com/thlcodes/genfig/util"
 	u "github.com/thlcodes/genfig/util"
 )
+
+func init() {
+	gob.Register(map[string]interface{}{})
+	gob.Register(map[interface{}]interface{}{})
+	gob.Register([]interface{}{})
+}
 
 //WriteConfig writes
 func WriteConfig(w io.Writer, s models.SchemaMap, config map[string]interface{}, def map[string]interface{}, env string) (err error) {
@@ -31,13 +39,17 @@ func WriteConfig(w io.Writer, s models.SchemaMap, config map[string]interface{},
 	// via an init function
 	buf.Write(u.B("func init() {" + nl + indent + "Envs." + strings.Title(env) + " = "))
 
-	// write actual config
-	WriteConfigValue(buf, defaultSchemaRootName, def, config, s, 1)
-
-	merged := def
+	merged := make(map[string]interface{})
+	copyMap(def, &merged)
+	fmt.Printf("copy: %v\n\n", merged)
 	if err := mergo.Merge(&merged, config, mergo.WithOverride); err != nil {
 		panic(err)
 	}
+	fmt.Printf("merged: %v\n\n", merged)
+
+	// write actual config
+	WriteConfigValue(buf, defaultSchemaRootName, merged, s, 1)
+
 	buf.Write(u.B(nl + indent + "Envs." + strings.Title(env) + "._map = " + fmt.Sprintf("%#v", merged)))
 
 	// closing bracket of init func
@@ -50,7 +62,7 @@ func WriteConfig(w io.Writer, s models.SchemaMap, config map[string]interface{},
 }
 
 //WriteConfigLine writes
-func WriteConfigLine(w io.Writer, p string, k string, v interface{}, o interface{}, s models.SchemaMap, l int) {
+func WriteConfigLine(w io.Writer, p string, k string, v interface{}, s models.SchemaMap, l int) {
 	if l > maxLevel {
 		panic(fmt.Errorf("Maximum of %d levels exceeded", maxLevel))
 	}
@@ -64,55 +76,62 @@ func WriteConfigLine(w io.Writer, p string, k string, v interface{}, o interface
 	w.Write(u.B(indents[:l*len(indent)]))
 	w.Write(u.B(n + ": "))
 
-	WriteConfigValue(w, p+n, v, o, s, l)
+	WriteConfigValue(w, p+n, v, s, l)
 
 	w.Write(u.B("," + nl))
 }
 
 //WriteConfigValue writes
-func WriteConfigValue(w io.Writer, p string, v interface{}, o interface{}, s models.SchemaMap, l int) {
+func WriteConfigValue(w io.Writer, p string, v interface{}, s models.SchemaMap, l int) {
 	switch v.(type) {
 	case map[string]interface{}:
 		w.Write(u.B(p + "{" + nl))
-		for _k, _v := range v.(map[string]interface{}) {
-			_o := getOverwriteEntry(o, _k)
-			WriteConfigLine(w, p, _k, _v, _o, s, l+1)
+		keys := []string{}
+		for _k := range v.(map[string]interface{}) {
+			keys = append(keys, _k)
+		}
+		sort.Strings(keys)
+		for _, _k := range keys {
+			_v := v.(map[string]interface{})[_k]
+			//_o := getOverwriteEntry(o, _k)
+			WriteConfigLine(w, p, _k, _v /*, _o*/, s, l+1)
 		}
 		w.Write(u.B(indents[:l*len(indent)]))
 		w.Write(u.B("}"))
 	case map[interface{}]interface{}:
 		w.Write(u.B(p + "{" + nl))
-		for _k, _v := range v.(map[interface{}]interface{}) {
-			_o := getOverwriteEntry(o, _k)
-			WriteConfigLine(w, p, fmt.Sprintf("%v", _k), _v, _o, s, l+1)
+		keys := []string{}
+		for _k := range v.(map[interface{}]interface{}) {
+			keys = append(keys, fmt.Sprintf("%v", _k))
+		}
+		sort.Strings(keys)
+		for _, _k := range keys {
+			_v := v.(map[interface{}]interface{})[_k]
+			WriteConfigLine(w, p, fmt.Sprintf("%v", _k), _v /*_o, */, s, l+1)
 		}
 		w.Write(u.B(indents[:l*len(indent)]))
 		w.Write(u.B("}"))
 	case []interface{}:
 		t := &v
-		if o != nil {
-			t = &o
-		}
 		typ := util.DetectSliceTypeString((*t).([]interface{}))
 		w.Write(u.B(strings.Replace(fmt.Sprintf("%#v", *t), "[]interface {}", typ, 1)))
 	default:
 		t := &v
-		if o != nil {
-			t = &o
-		}
 		fmt.Fprintf(w, `%#v`, *t)
 	}
 }
 
-func getOverwriteEntry(o interface{}, k interface{}) (r interface{}) {
-	if o == nil {
-		return
+func copyMap(from map[string]interface{}, to *map[string]interface{}) error {
+	var buf bytes.Buffer
+	enc := gob.NewEncoder(&buf)
+	dec := gob.NewDecoder(&buf)
+	err := enc.Encode(from)
+	if err != nil {
+		return err
 	}
-	switch o.(type) {
-	case map[string]interface{}:
-		r = o.(map[string]interface{})[fmt.Sprintf("%v", k)]
-	case map[interface{}]interface{}:
-		r = o.(map[interface{}]interface{})[k]
+	err = dec.Decode(to)
+	if err != nil {
+		return err
 	}
-	return
+	return nil
 }
