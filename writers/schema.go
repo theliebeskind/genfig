@@ -79,7 +79,13 @@ func WriteSchemaType(w io.Writer, p string, v interface{}, s models.SchemaMap, l
 		isStruct = true
 		buf := bytes.NewBuffer([]byte{})
 		w.Write(u.B("struct {" + nl))
-		for _k, _v := range v.(map[string]interface{}) {
+		keys := []string{}
+		for _k := range v.(map[string]interface{}) {
+			keys = append(keys, _k)
+		}
+		sort.Strings(keys)
+		for _, _k := range keys {
+			_v := v.(map[string]interface{})[_k]
 			_k = strings.Title(_k)
 			_isStruct := WriteSchema(buf, p+"_"+_k, _v, s, l+1)
 			if _isStruct {
@@ -98,7 +104,13 @@ func WriteSchemaType(w io.Writer, p string, v interface{}, s models.SchemaMap, l
 		isStruct = true
 		buf := bytes.NewBuffer([]byte{})
 		w.Write(u.B("struct {" + nl))
-		for _k, _v := range v.(map[interface{}]interface{}) {
+		keys := []string{}
+		for _k := range v.(map[interface{}]interface{}) {
+			keys = append(keys, fmt.Sprintf("%v", _k))
+		}
+		sort.Strings(keys)
+		for _, _k := range keys {
+			_v := v.(map[interface{}]interface{})[_k]
 			_K := strings.Title(fmt.Sprintf("%v", _k))
 			_isStruct := WriteSchema(buf, p+"_"+_K, _v, s, l+1)
 			if _isStruct {
