@@ -1,5 +1,5 @@
 package main
 
 func init() {
-	version = "v0.2.3-alpha"
+	version = "v0.2.4-alpha"
 }

@@ -22,6 +22,7 @@ func SetIndent(s string) {
 // the generation fails
 func SetMaxLevel(l int) {
 	maxLevel = l
+	indents = strings.Repeat(indent, maxLevel+1)
 }
 
 // SetNewline sets the new line to be used by the writers
