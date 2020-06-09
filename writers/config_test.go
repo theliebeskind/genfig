@@ -9,7 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/thlcodes/genfig/models"
-	"github.com/thlcodes/genfig/util"
 )
 
 func Test_WriteConfig(t *testing.T) {
@@ -56,21 +55,5 @@ func Test_WriteConfig(t *testing.T) {
 				assert.Contains(t, got, c)
 			}
 		})
-	}
-}
-
-func Benchmark_WriteConfigValue(b *testing.B) {
-	w := util.NoopWriter{}
-	s := models.SchemaMap{
-		"ConfigA":   models.Schema{},
-		"ConfigAB":  models.Schema{},
-		"ConfigABC": models.Schema{},
-		"ConfigABD": models.Schema{},
-		"ConfigABE": models.Schema{},
-	}
-	m := map[string]interface{}{"a": map[interface{}]interface{}{"b": map[string]interface{}{"c": []interface{}{1}, "d": "s", "e": 1}}}
-	e := map[string]interface{}{}
-	for n := 0; n < b.N; n++ {
-		writers.WriteConfigValue(w, "Config", m, e, s, 0)
 	}
 }

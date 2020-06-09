@@ -14,6 +14,7 @@ import (
 	"go/token"
 
 	"github.com/thlcodes/genfig/generator"
+	"github.com/thlcodes/genfig/writers"
 
 	"github.com/thlcodes/genfig/models"
 	"github.com/thlcodes/genfig/util"
@@ -45,6 +46,7 @@ func run() {
 	var (
 		helpFlag    = flag.Bool("help", false, "print this usage help")
 		versionFlag = flag.Bool("version", false, "print version")
+		maxLevel    = flag.Int("maxlevel", 5, "Maximum recursion level")
 		dir         = flag.String("dir", "./config", "directory to write generated files into")
 	)
 
@@ -58,6 +60,8 @@ func run() {
 		flag.Usage()
 		return
 	}
+
+	writers.SetMaxLevel(*maxLevel)
 
 	args := flag.Args()
 	if len(args) == 0 {

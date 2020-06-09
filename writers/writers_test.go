@@ -3,7 +3,7 @@ package writers_test
 import "github.com/thlcodes/genfig/writers"
 
 const (
-	maxLevel = 5
+	maxLevel = 10
 	indent   = "  "
 	newLine  = "n"
 )
