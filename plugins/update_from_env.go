@@ -25,10 +25,15 @@ var (
 			New("updateFromEnv").
 			Funcs(template.FuncMap{
 				"upper": strings.ToUpper,
+				"lower": strings.ToLower,
 				"title": strings.Title,
 				// Remove root (usually "Config_") from env var name
 				"cleanPrefixEnv": func(s string) string {
 					return strings.Join(strings.Split(s, "_")[1:], "_")
+				},
+				// A_B to a.b
+				"dotPath": func(s string) string {
+					return strings.ReplaceAll(s, "_", ".")
 				},
 				// Converte an env var name to a Config path
 				"makePath": func(s string) string {
@@ -47,6 +52,7 @@ var (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -60,13 +66,19 @@ func (c *Config) UpdateFromEnv() []error {
 	_ = val
 	var exists bool
 	_ = exists
+	var envs []string
+	_ = envs
 	var errors = []error{}
 {{range $_, $v := .}}{{if not $v.IsStruct}}
-	if val, exists = os.LookupEnv("{{cleanPrefixEnv (upper $v.Path)}}"); exists { {{if eq $v.Content "string"}}
+	envs = []string{"{{dotPath (cleanPrefixEnv (lower $v.Path))}}", "{{cleanPrefixEnv (upper $v.Path)}}"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists { {{if eq $v.Content "string"}}
 		c.{{makePath $v.Path}} = val {{else}}
-		if v, err := parse{{title (renameSlice $v.Content)}}(val); err == nil {
-			c.{{makePath $v.Path}} = v
-		} else {
+		if err := parse{{title (renameSlice $v.Content)}}(val, &c.{{makePath $v.Path}}); err != nil {
 			errors = append(errors, fmt.Errorf("Genfig: could not parse {{$v.Content}} from {{upper $v.Path}} ('%s')\n", val))
 		} {{end}}
 	}
@@ -81,43 +93,114 @@ func (c *Config) UpdateFromEnv() []error {
 // these are wrappers, so that they can
 // a) be referenced easily be the code generator and
 // b) be replaces easily by you (or me)
-func parseInt64(s string) (i int64, err error) {
-	i, err = strconv.ParseInt(s, 10, 0)
+func parseInt64(s string, i *int64) (err error) {
+	if got, err := strconv.ParseInt(s, 10, 0); err == nil {
+		*i = got
+	}
 	return
 }
 
-func parseFloat64(s string) (f float64, err error) {
-	f, err = strconv.ParseFloat(s, 0)
+func parseFloat64(s string, f *float64) (err error) {
+	if got, err := strconv.ParseFloat(s, 0); err == nil {
+		*f = got
+	}
 	return
 }
 
-func parseBool(s string) (b bool, err error) {
-	b, err = strconv.ParseBool(s)
+func parseBool(s string, b *bool) (err error) {
+	if got, err := strconv.ParseBool(s); err != nil {
+		*b = got
+	}
 	return
 }
 
-func parseStringSlice(s string) (a []string, err error) {
-	err = json.Unmarshal([]byte(s), &a)
+func parseStringSlice(s string, a *[]string) (err error) {
+	add := false
+	if strings.HasPrefix(s, "+") {
+		add = true
+		s = s[1:]
+	}
+	tmp := []string{}
+	if err = json.Unmarshal([]byte(s), &tmp); err != nil {
+		return
+	}
+	if add {
+		*a = append(*a, tmp...)
+	} else {
+		*a = tmp
+	}
 	return
 }
 
-func parseInt64Slice(s string) (a []int64, err error) {
-	err = json.Unmarshal([]byte(s), &a)
+func parseInt64Slice(s string, a *[]int64) (err error) {
+	add := false
+	if strings.HasPrefix(s, "+") {
+		add = true
+		s = s[1:]
+	}
+	tmp := []int64{}
+	if err = json.Unmarshal([]byte(s), &tmp); err != nil {
+		return
+	}
+	if add {
+		*a = append(*a, tmp...)
+	} else {
+		*a = tmp
+	}
 	return
 }
 
-func parseFloat64Slice(s string) (a []float64, err error) {
-	err = json.Unmarshal([]byte(s), &a)
+func parseFloat64Slice(s string, a *[]float64) (err error) {
+	add := false
+	if strings.HasPrefix(s, "+") {
+		add = true
+		s = s[1:]
+	}
+	tmp := []float64{}
+	if err = json.Unmarshal([]byte(s), &tmp); err != nil {
+		return
+	}
+	if add {
+		*a = append(*a, tmp...)
+	} else {
+		*a = tmp
+	}
 	return
 }
 
-func parseInterfaceSlice(s string) (a []interface{}, err error) {
-	err = json.Unmarshal([]byte(s), &a)
+func parseInterfaceSlice(s string, a *[]interface{},) (err error) {
+	add := false
+	if strings.HasPrefix(s, "+") {
+		add = true
+		s = s[1:]
+	}
+	tmp := []interface{}{}
+	if err = json.Unmarshal([]byte(s), &tmp); err != nil {
+		return
+	}
+	if add {
+		*a = append(*a, tmp...)
+	} else {
+		*a = tmp
+	}
 	return
 }
 
-func parseMapSlice(s string) (a []map[string]interface{}, err error) {
-	err = json.Unmarshal([]byte(s), &a)
+func parseMapSlice(s string, a *[]map[string]interface{}) (err error) {
+	add := false
+	if strings.HasPrefix(s, "+") {
+		add = true
+		s = s[1:]
+	}
+	tmp := []map[string]interface{}{}
+	if err = json.Unmarshal([]byte(s), &tmp); err != nil {
+		return
+	}
+	if add {
+		*a = append(*a, tmp...)
+	} else {
+		*a = tmp
+	}
 	return
 }
 `))}
