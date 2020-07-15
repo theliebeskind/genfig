@@ -30,6 +30,8 @@ var (
 			}).
 			Parse(`import (
 	"strings"
+	"regexp"
+	"os"
 )
 
 var _ = strings.Contains
@@ -73,6 +75,8 @@ func (c *Config) ResetSubstitution() {
 func (c *Config) substitute() int {
 	cnt := 0
 
+	envReplacer := regexp.MustCompile(` + "`\\${\\w+}`" + `)
+
 	r := strings.NewReplacer({{range $_, $v := .}}{{if eq $v.Content "string"}}
 		"${{"{"}}{{makeSubstPath $v.Path}}{{"}"}}", c.{{makePath $v.Path}},
 	{{end}}{{end}})
@@ -83,7 +87,16 @@ func (c *Config) substitute() int {
 		c.{{makePath $v.Path}} = r.Replace(c.{{makePath $v.Path}})
 		if !strings.Contains(c.{{makePath $v.Path}}, "${") {
 			cnt -= 1
-		} 
+		} else {
+			c.{{makePath $v.Path}} = envReplacer.ReplaceAllStringFunc(c.{{makePath $v.Path}}, func(in string) (out string) {
+				out = in
+				envName := in[2:len(in)-1]
+				if envVal, found := os.LookupEnv(envName); found {
+					out = envVal
+				}
+				return
+			})
+		}
 	}
 	{{end}}{{end}}
 
