@@ -30,7 +30,7 @@ func Test_WriteConfig(t *testing.T) {
 		{"int interface array", map[string]interface{}{"a": []interface{}{1, 2}}, nil, []string{"A: []int{1, 2}"}, false},
 		{"string interface array", map[string]interface{}{"a": []interface{}{"a", "b"}}, nil, []string{"A: []string"}, false},
 		{"map", map[string]interface{}{"a": map[string]interface{}{"b": 1}}, nil, []string{"A: ConfigA{", "B: 1"}, false},
-		{"map with interface key", map[string]interface{}{"a": map[interface{}]interface{}{"b": 1}}, nil, []string{"A: ConfigA{", "B: 1"}, false},
+		{"map with interface key", map[string]interface{}{"a": map[string]interface{}{"b": 1}}, nil, []string{"A: ConfigA{", "B: 1"}, false},
 		{"map of map", map[string]interface{}{"a": map[string]interface{}{"b": map[string]interface{}{"c": 1}}}, nil, []string{"A: ConfigA{", "B: ConfigAB{", "C: 1"}, false},
 	}
 	for _, tt := range tests {

@@ -18,7 +18,6 @@ import (
 
 func init() {
 	gob.Register(map[string]interface{}{})
-	gob.Register(map[interface{}]interface{}{})
 	gob.Register([]interface{}{})
 }
 
@@ -93,19 +92,6 @@ func WriteConfigValue(w io.Writer, p string, v interface{}, s models.SchemaMap, 
 			_v := v.(map[string]interface{})[_k]
 			//_o := getOverwriteEntry(o, _k)
 			WriteConfigLine(w, p, _k, _v /*, _o*/, s, l+1)
-		}
-		w.Write(u.B(indents[:l*len(indent)]))
-		w.Write(u.B("}"))
-	case map[interface{}]interface{}:
-		w.Write(u.B(p + "{" + nl))
-		keys := []string{}
-		for _k := range v.(map[interface{}]interface{}) {
-			keys = append(keys, fmt.Sprintf("%v", _k))
-		}
-		sort.Strings(keys)
-		for _, _k := range keys {
-			_v := v.(map[interface{}]interface{})[_k]
-			WriteConfigLine(w, p, fmt.Sprintf("%v", _k), _v /*_o, */, s, l+1)
 		}
 		w.Write(u.B(indents[:l*len(indent)]))
 		w.Write(u.B("}"))

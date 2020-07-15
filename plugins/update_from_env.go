@@ -116,7 +116,7 @@ func parseInterfaceSlice(s string) (a []interface{}, err error) {
 	return
 }
 
-func parseMapSlice(s string) (a []map[interface{}]interface{}, err error) {
+func parseMapSlice(s string) (a []map[string]interface{}, err error) {
 	err = json.Unmarshal([]byte(s), &a)
 	return
 }

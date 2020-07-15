@@ -31,7 +31,7 @@ func Test_All(t *testing.T) {
 			Path:    "D",
 		},
 		"E": models.Schema{
-			Content: "[]map[interface {}]interface {}",
+			Content: "[]map[string]interface {}",
 			Path:    "D",
 		},
 	}

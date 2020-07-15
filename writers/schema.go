@@ -100,27 +100,6 @@ func WriteSchemaType(w io.Writer, p string, v interface{}, s models.SchemaMap, l
 			w.Write(u.B(indent + "_map map[string]interface{} " + nl))
 		}
 		w.Write(u.B("}" + nl))
-	case map[interface{}]interface{}:
-		isStruct = true
-		buf := bytes.NewBuffer([]byte{})
-		w.Write(u.B("struct {" + nl))
-		keys := []string{}
-		for _k := range v.(map[interface{}]interface{}) {
-			keys = append(keys, fmt.Sprintf("%v", _k))
-		}
-		sort.Strings(keys)
-		for _, _k := range keys {
-			_v := v.(map[interface{}]interface{})[_k]
-			_K := strings.Title(fmt.Sprintf("%v", _k))
-			_isStruct := WriteSchema(buf, p+"_"+_K, _v, s, l+1)
-			if _isStruct {
-				w.Write(u.B(indent + _K + " " + strings.Replace(p, "_", "", -1) + _K + nl))
-			} else {
-				w.Write(u.B(indent + _K + " " + buf.String() + nl))
-			}
-			buf.Reset()
-		}
-		w.Write(u.B("}" + nl))
 	case []interface{}:
 		w.Write(u.B(u.Make64(u.DetectSliceTypeString(v.([]interface{})))))
 	default:

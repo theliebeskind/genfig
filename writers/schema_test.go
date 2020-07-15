@@ -30,7 +30,7 @@ func Test_WriteSchema(t *testing.T) {
 		{"int interface array", map[string]interface{}{"a": []interface{}{1, 2}}, []string{"A []int64"}, models.Schema{}, false},
 		{"string interface array", map[string]interface{}{"a": []interface{}{"a", "b"}}, []string{"A []string"}, models.Schema{}, false},
 		{"map", map[string]interface{}{"a": map[string]interface{}{"b": 1}}, []string{"A struct {", "B int"}, models.Schema{}, false},
-		{"iface key map", map[string]interface{}{"a": map[interface{}]interface{}{"b": 1}}, []string{"A struct {", "B int"}, models.Schema{}, false},
+		{"iface key map", map[string]interface{}{"a": map[string]interface{}{"b": 1}}, []string{"A struct {", "B int"}, models.Schema{}, false},
 		{"map of map", map[string]interface{}{"a": map[string]interface{}{"b": map[string]interface{}{"c": 1}}}, []string{"A struct {", "B struct {", "C int"}, models.Schema{}, false},
 	}
 	for _, tt := range tests {
@@ -53,7 +53,7 @@ func Test_WriteSchema(t *testing.T) {
 func Benchmark_WriteSchemaType(b *testing.B) {
 	w := util.NoopWriter{}
 	s := models.SchemaMap{}
-	m := map[string]interface{}{"a": map[interface{}]interface{}{"b0": 1, "b": map[string]interface{}{"c": []interface{}{1}, "d": "s", "e": 1}}}
+	m := map[string]interface{}{"a": map[string]interface{}{"b0": 1, "b": map[string]interface{}{"c": []interface{}{1}, "d": "s", "e": 1}}}
 	for n := 0; n < b.N; n++ {
 		writers.WriteSchemaType(w, "Config", m, s, 0)
 	}

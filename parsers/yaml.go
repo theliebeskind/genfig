@@ -3,7 +3,7 @@ package parsers
 import (
 	"errors"
 
-	yaml "gopkg.in/yaml.v2"
+	yaml "gopkg.in/yaml.v3"
 )
 
 // YamlStrategy parses yaml and json files

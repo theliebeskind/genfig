@@ -37,7 +37,7 @@ f:
 )
 
 var (
-	complexYamlResult = map[string]interface{}{"a": "b", "c": map[interface{}]interface{}{"d": 1, "e": 2}, "f": []interface{}{2, "3", "g"}}
+	complexYamlResult = map[string]interface{}{"a": "b", "c": map[string]interface{}{"d": 1, "e": 2}, "f": []interface{}{2, "3", "g"}}
 )
 
 func Test_Yaml(t *testing.T) {
