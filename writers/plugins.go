@@ -3,6 +3,7 @@ package writers
 import (
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/thlcodes/genfig/plugins"
 
@@ -17,7 +18,11 @@ const (
 func WritePlugins(schema models.SchemaMap, dir string, pkg string, cmd string, calls map[string]string) ([]string, error) {
 	files := []string{}
 	for n, p := range plugins.Plugins {
+		orig := n
 		p.SetSchemaMap(schema)
+		if strings.Contains(n, "_") {
+			n = n[strings.Index(n, "_")+1:]
+		}
 		path := filepath.Join(dir, pluginPrefix+n+".go")
 		if f, err := os.Create(path); err != nil {
 			return files, err
@@ -30,7 +35,7 @@ func WritePlugins(schema models.SchemaMap, dir string, pkg string, cmd string, c
 			files = append(files, path)
 		}
 		if c, has := p.GetInitCall(); has {
-			calls[n] = c
+			calls[orig] = c
 		}
 	}
 	return files, nil

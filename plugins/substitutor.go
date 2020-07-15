@@ -94,7 +94,7 @@ func (c *Config) substitute() int {
 
 func init() {
 	// "register" plugin
-	Plugins["substitutor"] = &substitutor
+	Plugins["80_substitutor"] = &substitutor
 }
 
 // GetInitCall returns the availibility and the string of the

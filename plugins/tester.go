@@ -27,7 +27,7 @@ func Test_CurrentConfig(t *testing.T) {
 
 func init() {
 	// "register" plugin
-	Plugins["config_test"] = &configTest
+	Plugins["90_config_test"] = &configTest
 }
 
 // GetInitCall returns the availibility and the string of the

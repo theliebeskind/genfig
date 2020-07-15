@@ -59,7 +59,7 @@ func (c *Config) WriteToEnv() {
 
 func init() {
 	// "register" plugin
-	Plugins["write_to_env"] = &writeToEnv
+	Plugins["85_write_to_env"] = &writeToEnv
 }
 
 // GetInitCall returns the availibility and the string of the

@@ -125,7 +125,7 @@ func parseMapSlice(s string) (a []map[string]interface{}, err error) {
 
 func init() {
 	// "register" plugin
-	Plugins["update_from_env"] = &updateFromEnv
+	Plugins["30_update_from_env"] = &updateFromEnv
 }
 
 // GetInitCall returns the availibility and the string of the

@@ -2,6 +2,7 @@ package writers
 
 import (
 	"io"
+	"sort"
 	"text/template"
 )
 
@@ -24,8 +25,7 @@ var Current *Config
 // common env var 'ENV' and applies activated plugins
 func init() {
 	Current, _ = Get(os.Getenv("ENV"))
-	{{range $k, $v := .PluginCalls}}
-	// calling plugin {{$k}}
+	{{range $_, $v := .PluginCalls}}
 	{{$v}}
 	{{end}}
 }
@@ -35,7 +35,16 @@ func init() {
 
 //WriteInit writes
 func WriteInit(w io.Writer, pluginCalls map[string]string) error {
+	keys := []string{}
+	for k := range pluginCalls {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	calls := []string{}
+	for _, k := range keys {
+		calls = append(calls, pluginCalls[k])
+	}
 	return initTpl.Execute(w, struct {
-		PluginCalls map[string]string
-	}{PluginCalls: pluginCalls})
+		PluginCalls []string
+	}{PluginCalls: calls})
 }

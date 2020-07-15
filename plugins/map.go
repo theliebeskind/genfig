@@ -33,7 +33,7 @@ func (c *Config) AsMap() map[string]interface{} {
 
 func init() {
 	// "register" plugin
-	Plugins["map"] = &mapt
+	Plugins["99_map"] = &mapt
 }
 
 // GetInitCall returns the availibility and the string of the
