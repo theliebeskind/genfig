@@ -6,7 +6,7 @@ type Config struct {
 	Apis       ConfigApis
 	Db         ConfigDb
 	EmptyArray []interface{}
-	List       []map[interface{}]interface{}
+	List       []map[string]interface{}
 	LongDesc   ConfigLongDesc
 	Project    string
 	Randomizer ConfigRandomizer
@@ -14,7 +14,6 @@ type Config struct {
 	Server     ConfigServer
 	Version    string
 	Wip        bool
-	_map       map[string]interface{}
 }
 
 type ConfigApis struct {

@@ -2,6 +2,16 @@
 
 package config
 
-func (c *Config) Map() map[string]interface{} {
-	return c._map
+import "encoding/json"
+
+func (c *Config) AsMap() map[string]interface{} {
+	marshaled, err := json.Marshal(c)
+	if err != nil {
+		return nil
+	}
+	m := map[string]interface{}{}
+	if err := json.Unmarshal(marshaled, &m); err != nil {
+		return nil
+	}
+	return m
 }

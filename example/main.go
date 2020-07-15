@@ -18,5 +18,5 @@ func main() {
 
 	fmt.Println(config.Envs.Test.Version)
 
-	fmt.Println(config.Current.Map())
+	fmt.Println(config.Current.AsMap())
 }

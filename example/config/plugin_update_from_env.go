@@ -50,7 +50,7 @@ func (c *Config) UpdateFromEnv() []error {
 		if v, err := parseMapSlice(val); err == nil {
 			c.List = v
 		} else {
-			errors = append(errors, fmt.Errorf("Genfig: could not parse []map[interface {}]interface {} from CONFIG_LIST ('%s')\n", val))
+			errors = append(errors, fmt.Errorf("Genfig: could not parse []map[string]interface {} from CONFIG_LIST ('%s')\n", val))
 		}
 	}
 
@@ -151,7 +151,7 @@ func parseInterfaceSlice(s string) (a []interface{}, err error) {
 	return
 }
 
-func parseMapSlice(s string) (a []map[interface{}]interface{}, err error) {
+func parseMapSlice(s string) (a []map[string]interface{}, err error) {
 	err = json.Unmarshal([]byte(s), &a)
 	return
 }

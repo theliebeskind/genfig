@@ -47,8 +47,6 @@ func WriteConfig(w io.Writer, s models.SchemaMap, config map[string]interface{},
 	// write actual config
 	WriteConfigValue(buf, defaultSchemaRootName, merged, s, 1)
 
-	buf.Write(u.B(nl + indent + "Envs." + strings.Title(env) + "._map = " + fmt.Sprintf("%#v", merged)))
-
 	// closing bracket of init func
 	buf.Write(u.B(nl + "}" + nl))
 

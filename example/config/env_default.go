@@ -15,7 +15,7 @@ func init() {
 			User: "",
 		},
 		EmptyArray: []interface{}{},
-		List:       []map[interface{}]interface{}{map[interface{}]interface{}{"a": 1, "b": 2}, map[interface{}]interface{}{"a": 3, "b": 4}},
+		List:       []map[string]interface{}{map[string]interface{}{"a": 1, "b": 2}, map[string]interface{}{"a": 3, "b": 4}},
 		LongDesc: ConfigLongDesc{
 			De: "Lange Beschreibung",
 			En: "Long description",
@@ -32,5 +32,4 @@ func init() {
 		Version: "0.1.0",
 		Wip:     true,
 	}
-	Envs.Default._map = map[string]interface{}{"apis": map[interface{}]interface{}{"google": map[interface{}]interface{}{"uri": "google.com"}}, "db": map[interface{}]interface{}{"pass": "", "uri": "mongdb://localhos:27017/db", "user": ""}, "emptyArray": []interface{}{}, "list": []interface{}{map[interface{}]interface{}{"a": 1, "b": 2}, map[interface{}]interface{}{"a": 3, "b": 4}}, "longDesc": map[interface{}]interface{}{"de": "Lange Beschreibung", "en": "Long description"}, "project": "genfig", "randomizer": map[interface{}]interface{}{"threshold": 0.75}, "secrets": []interface{}{""}, "server": map[interface{}]interface{}{"host": "localhost", "port": 1234}, "version": "0.1.0", "wip": true}
 }
