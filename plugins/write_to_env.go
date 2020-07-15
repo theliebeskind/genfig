@@ -20,8 +20,12 @@ var (
 			New("writeToEnv").
 			Funcs(template.FuncMap{
 				"upper":     strings.ToUpper,
+				"lower":     strings.ToLower,
 				"hasPrefix": strings.HasPrefix,
 				// Remove root (usually "Config_") from env var name
+				"dotPath": func(s string) string {
+					return strings.ReplaceAll(s, "_", ".")
+				},
 				"cleanPrefixEnv": func(s string) string {
 					return strings.Join(strings.Split(s, "_")[1:], "_")
 				},
@@ -33,6 +37,8 @@ var (
 			Parse(`import (
 	"fmt"
 	"os"
+	"io"
+	"fmt"
 	"encoding/json"
 )
 
@@ -51,6 +57,19 @@ func (c *Config) WriteToEnv() {
 	_ = os.Setenv("{{cleanPrefixEnv (upper $v.Path)}}", string(buf))
 	{{else}}
 	_ = os.Setenv("{{cleanPrefixEnv (upper $v.Path)}}", fmt.Sprintf("%v", c.{{makePath $v.Path}}))
+	{{end}}
+{{end}}{{end}}
+}
+
+func (c *Config) PrintDebugEnvs(w io.Writer) {
+	var buf []byte
+	_ = buf
+{{range $_, $v := .}}{{if not $v.IsStruct}}
+	{{if hasPrefix $v.Content "[]"}}
+	buf, _ = json.Marshal(c.{{makePath $v.Path}})
+	fmt.Fprintf(w, "{{cleanPrefixEnv (upper $v.Path)}}/{{dotPath (cleanPrefixEnv (lower $v.Path))}}='%v'\n", string(buf))
+	{{else}}
+	fmt.Fprintf(w, "{{cleanPrefixEnv (upper $v.Path)}}/{{dotPath (cleanPrefixEnv (lower $v.Path))}}='%v'\n", c.{{makePath $v.Path}})
 	{{end}}
 {{end}}{{end}}
 }
