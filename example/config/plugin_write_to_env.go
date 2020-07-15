@@ -5,6 +5,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 )
 
@@ -50,5 +51,44 @@ func (c *Config) WriteToEnv() {
 	_ = os.Setenv("VERSION", fmt.Sprintf("%v", c.Version))
 
 	_ = os.Setenv("WIP", fmt.Sprintf("%v", c.Wip))
+
+}
+
+func (c *Config) PrintDebugEnvs(w io.Writer) {
+	var buf []byte
+	_ = buf
+
+	fmt.Fprintf(w, "APIS_GOOGLE_URI/apis.google.uri='%v'\n", c.Apis.Google.Uri)
+
+	fmt.Fprintf(w, "DB_PASS/db.pass='%v'\n", c.Db.Pass)
+
+	fmt.Fprintf(w, "DB_URI/db.uri='%v'\n", c.Db.Uri)
+
+	fmt.Fprintf(w, "DB_USER/db.user='%v'\n", c.Db.User)
+
+	buf, _ = json.Marshal(c.EmptyArray)
+	fmt.Fprintf(w, "EMPTYARRAY/emptyarray='%v'\n", string(buf))
+
+	buf, _ = json.Marshal(c.List)
+	fmt.Fprintf(w, "LIST/list='%v'\n", string(buf))
+
+	fmt.Fprintf(w, "LONGDESC_DE/longdesc.de='%v'\n", c.LongDesc.De)
+
+	fmt.Fprintf(w, "LONGDESC_EN/longdesc.en='%v'\n", c.LongDesc.En)
+
+	fmt.Fprintf(w, "PROJECT/project='%v'\n", c.Project)
+
+	fmt.Fprintf(w, "RANDOMIZER_THRESHOLD/randomizer.threshold='%v'\n", c.Randomizer.Threshold)
+
+	buf, _ = json.Marshal(c.Secrets)
+	fmt.Fprintf(w, "SECRETS/secrets='%v'\n", string(buf))
+
+	fmt.Fprintf(w, "SERVER_HOST/server.host='%v'\n", c.Server.Host)
+
+	fmt.Fprintf(w, "SERVER_PORT/server.port='%v'\n", c.Server.Port)
+
+	fmt.Fprintf(w, "VERSION/version='%v'\n", c.Version)
+
+	fmt.Fprintf(w, "WIP/wip='%v'\n", c.Wip)
 
 }

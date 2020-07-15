@@ -4,6 +4,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/thlcodes/genfig/example/config"
@@ -19,4 +20,8 @@ func main() {
 	fmt.Println(config.Envs.Test.Version)
 
 	fmt.Println(config.Current.AsMap())
+
+	buf := &bytes.Buffer{}
+	config.Current.PrintDebugEnvs(buf)
+	fmt.Println(buf.String())
 }

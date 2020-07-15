@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -20,88 +21,168 @@ func (c *Config) UpdateFromEnv() []error {
 	_ = val
 	var exists bool
 	_ = exists
+	var envs []string
+	_ = envs
 	var errors = []error{}
 
-	if val, exists = os.LookupEnv("APIS_GOOGLE_URI"); exists {
+	envs = []string{"apis.google.uri", "APIS_GOOGLE_URI"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
 		c.Apis.Google.Uri = val
 	}
 
-	if val, exists = os.LookupEnv("DB_PASS"); exists {
+	envs = []string{"db.pass", "DB_PASS"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
 		c.Db.Pass = val
 	}
 
-	if val, exists = os.LookupEnv("DB_URI"); exists {
+	envs = []string{"db.uri", "DB_URI"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
 		c.Db.Uri = val
 	}
 
-	if val, exists = os.LookupEnv("DB_USER"); exists {
+	envs = []string{"db.user", "DB_USER"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
 		c.Db.User = val
 	}
 
-	if val, exists = os.LookupEnv("EMPTYARRAY"); exists {
-		if v, err := parseInterfaceSlice(val); err == nil {
-			c.EmptyArray = v
-		} else {
+	envs = []string{"emptyarray", "EMPTYARRAY"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
+		if err := parseInterfaceSlice(val, &c.EmptyArray); err != nil {
 			errors = append(errors, fmt.Errorf("Genfig: could not parse []interface {} from CONFIG_EMPTYARRAY ('%s')\n", val))
 		}
 	}
 
-	if val, exists = os.LookupEnv("LIST"); exists {
-		if v, err := parseMapSlice(val); err == nil {
-			c.List = v
-		} else {
+	envs = []string{"list", "LIST"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
+		if err := parseMapSlice(val, &c.List); err != nil {
 			errors = append(errors, fmt.Errorf("Genfig: could not parse []map[string]interface {} from CONFIG_LIST ('%s')\n", val))
 		}
 	}
 
-	if val, exists = os.LookupEnv("LONGDESC_DE"); exists {
+	envs = []string{"longdesc.de", "LONGDESC_DE"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
 		c.LongDesc.De = val
 	}
 
-	if val, exists = os.LookupEnv("LONGDESC_EN"); exists {
+	envs = []string{"longdesc.en", "LONGDESC_EN"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
 		c.LongDesc.En = val
 	}
 
-	if val, exists = os.LookupEnv("PROJECT"); exists {
+	envs = []string{"project", "PROJECT"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
 		c.Project = val
 	}
 
-	if val, exists = os.LookupEnv("RANDOMIZER_THRESHOLD"); exists {
-		if v, err := parseFloat64(val); err == nil {
-			c.Randomizer.Threshold = v
-		} else {
+	envs = []string{"randomizer.threshold", "RANDOMIZER_THRESHOLD"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
+		if err := parseFloat64(val, &c.Randomizer.Threshold); err != nil {
 			errors = append(errors, fmt.Errorf("Genfig: could not parse float64 from CONFIG_RANDOMIZER_THRESHOLD ('%s')\n", val))
 		}
 	}
 
-	if val, exists = os.LookupEnv("SECRETS"); exists {
-		if v, err := parseStringSlice(val); err == nil {
-			c.Secrets = v
-		} else {
+	envs = []string{"secrets", "SECRETS"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
+		if err := parseStringSlice(val, &c.Secrets); err != nil {
 			errors = append(errors, fmt.Errorf("Genfig: could not parse []string from CONFIG_SECRETS ('%s')\n", val))
 		}
 	}
 
-	if val, exists = os.LookupEnv("SERVER_HOST"); exists {
+	envs = []string{"server.host", "SERVER_HOST"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
 		c.Server.Host = val
 	}
 
-	if val, exists = os.LookupEnv("SERVER_PORT"); exists {
-		if v, err := parseInt64(val); err == nil {
-			c.Server.Port = v
-		} else {
+	envs = []string{"server.port", "SERVER_PORT"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
+		if err := parseInt64(val, &c.Server.Port); err != nil {
 			errors = append(errors, fmt.Errorf("Genfig: could not parse int64 from CONFIG_SERVER_PORT ('%s')\n", val))
 		}
 	}
 
-	if val, exists = os.LookupEnv("VERSION"); exists {
+	envs = []string{"version", "VERSION"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
 		c.Version = val
 	}
 
-	if val, exists = os.LookupEnv("WIP"); exists {
-		if v, err := parseBool(val); err == nil {
-			c.Wip = v
-		} else {
+	envs = []string{"wip", "WIP"}
+	for _, env := range envs {
+		if val, exists = os.LookupEnv(env); exists {
+			break
+		}
+	}
+	if exists {
+		if err := parseBool(val, &c.Wip); err != nil {
 			errors = append(errors, fmt.Errorf("Genfig: could not parse bool from CONFIG_WIP ('%s')\n", val))
 		}
 	}
@@ -116,42 +197,113 @@ func (c *Config) UpdateFromEnv() []error {
 // these are wrappers, so that they can
 // a) be referenced easily be the code generator and
 // b) be replaces easily by you (or me)
-func parseInt64(s string) (i int64, err error) {
-	i, err = strconv.ParseInt(s, 10, 0)
+func parseInt64(s string, i *int64) (err error) {
+	if got, err := strconv.ParseInt(s, 10, 0); err == nil {
+		*i = got
+	}
 	return
 }
 
-func parseFloat64(s string) (f float64, err error) {
-	f, err = strconv.ParseFloat(s, 0)
+func parseFloat64(s string, f *float64) (err error) {
+	if got, err := strconv.ParseFloat(s, 0); err == nil {
+		*f = got
+	}
 	return
 }
 
-func parseBool(s string) (b bool, err error) {
-	b, err = strconv.ParseBool(s)
+func parseBool(s string, b *bool) (err error) {
+	if got, err := strconv.ParseBool(s); err != nil {
+		*b = got
+	}
 	return
 }
 
-func parseStringSlice(s string) (a []string, err error) {
-	err = json.Unmarshal([]byte(s), &a)
+func parseStringSlice(s string, a *[]string) (err error) {
+	add := false
+	if strings.HasPrefix(s, "+") {
+		add = true
+		s = s[1:]
+	}
+	tmp := []string{}
+	if err = json.Unmarshal([]byte(s), &tmp); err != nil {
+		return
+	}
+	if add {
+		*a = append(*a, tmp...)
+	} else {
+		*a = tmp
+	}
 	return
 }
 
-func parseInt64Slice(s string) (a []int64, err error) {
-	err = json.Unmarshal([]byte(s), &a)
+func parseInt64Slice(s string, a *[]int64) (err error) {
+	add := false
+	if strings.HasPrefix(s, "+") {
+		add = true
+		s = s[1:]
+	}
+	tmp := []int64{}
+	if err = json.Unmarshal([]byte(s), &tmp); err != nil {
+		return
+	}
+	if add {
+		*a = append(*a, tmp...)
+	} else {
+		*a = tmp
+	}
 	return
 }
 
-func parseFloat64Slice(s string) (a []float64, err error) {
-	err = json.Unmarshal([]byte(s), &a)
+func parseFloat64Slice(s string, a *[]float64) (err error) {
+	add := false
+	if strings.HasPrefix(s, "+") {
+		add = true
+		s = s[1:]
+	}
+	tmp := []float64{}
+	if err = json.Unmarshal([]byte(s), &tmp); err != nil {
+		return
+	}
+	if add {
+		*a = append(*a, tmp...)
+	} else {
+		*a = tmp
+	}
 	return
 }
 
-func parseInterfaceSlice(s string) (a []interface{}, err error) {
-	err = json.Unmarshal([]byte(s), &a)
+func parseInterfaceSlice(s string, a *[]interface{}) (err error) {
+	add := false
+	if strings.HasPrefix(s, "+") {
+		add = true
+		s = s[1:]
+	}
+	tmp := []interface{}{}
+	if err = json.Unmarshal([]byte(s), &tmp); err != nil {
+		return
+	}
+	if add {
+		*a = append(*a, tmp...)
+	} else {
+		*a = tmp
+	}
 	return
 }
 
-func parseMapSlice(s string) (a []map[string]interface{}, err error) {
-	err = json.Unmarshal([]byte(s), &a)
+func parseMapSlice(s string, a *[]map[string]interface{}) (err error) {
+	add := false
+	if strings.HasPrefix(s, "+") {
+		add = true
+		s = s[1:]
+	}
+	tmp := []map[string]interface{}{}
+	if err = json.Unmarshal([]byte(s), &tmp); err != nil {
+		return
+	}
+	if add {
+		*a = append(*a, tmp...)
+	} else {
+		*a = tmp
+	}
 	return
 }

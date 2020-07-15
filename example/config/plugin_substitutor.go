@@ -3,6 +3,8 @@
 package config
 
 import (
+	"os"
+	"regexp"
 	"strings"
 )
 
@@ -47,6 +49,8 @@ func (c *Config) ResetSubstitution() {
 func (c *Config) substitute() int {
 	cnt := 0
 
+	envReplacer := regexp.MustCompile(`\${\w+}`)
+
 	r := strings.NewReplacer(
 		"${apis.google.uri}", c.Apis.Google.Uri,
 
@@ -72,6 +76,15 @@ func (c *Config) substitute() int {
 		c.Apis.Google.Uri = r.Replace(c.Apis.Google.Uri)
 		if !strings.Contains(c.Apis.Google.Uri, "${") {
 			cnt -= 1
+		} else {
+			c.Apis.Google.Uri = envReplacer.ReplaceAllStringFunc(c.Apis.Google.Uri, func(in string) (out string) {
+				out = in
+				envName := in[2 : len(in)-1]
+				if envVal, found := os.LookupEnv(envName); found {
+					out = envVal
+				}
+				return
+			})
 		}
 	}
 
@@ -80,6 +93,15 @@ func (c *Config) substitute() int {
 		c.Db.Pass = r.Replace(c.Db.Pass)
 		if !strings.Contains(c.Db.Pass, "${") {
 			cnt -= 1
+		} else {
+			c.Db.Pass = envReplacer.ReplaceAllStringFunc(c.Db.Pass, func(in string) (out string) {
+				out = in
+				envName := in[2 : len(in)-1]
+				if envVal, found := os.LookupEnv(envName); found {
+					out = envVal
+				}
+				return
+			})
 		}
 	}
 
@@ -88,6 +110,15 @@ func (c *Config) substitute() int {
 		c.Db.Uri = r.Replace(c.Db.Uri)
 		if !strings.Contains(c.Db.Uri, "${") {
 			cnt -= 1
+		} else {
+			c.Db.Uri = envReplacer.ReplaceAllStringFunc(c.Db.Uri, func(in string) (out string) {
+				out = in
+				envName := in[2 : len(in)-1]
+				if envVal, found := os.LookupEnv(envName); found {
+					out = envVal
+				}
+				return
+			})
 		}
 	}
 
@@ -96,6 +127,15 @@ func (c *Config) substitute() int {
 		c.Db.User = r.Replace(c.Db.User)
 		if !strings.Contains(c.Db.User, "${") {
 			cnt -= 1
+		} else {
+			c.Db.User = envReplacer.ReplaceAllStringFunc(c.Db.User, func(in string) (out string) {
+				out = in
+				envName := in[2 : len(in)-1]
+				if envVal, found := os.LookupEnv(envName); found {
+					out = envVal
+				}
+				return
+			})
 		}
 	}
 
@@ -104,6 +144,15 @@ func (c *Config) substitute() int {
 		c.LongDesc.De = r.Replace(c.LongDesc.De)
 		if !strings.Contains(c.LongDesc.De, "${") {
 			cnt -= 1
+		} else {
+			c.LongDesc.De = envReplacer.ReplaceAllStringFunc(c.LongDesc.De, func(in string) (out string) {
+				out = in
+				envName := in[2 : len(in)-1]
+				if envVal, found := os.LookupEnv(envName); found {
+					out = envVal
+				}
+				return
+			})
 		}
 	}
 
@@ -112,6 +161,15 @@ func (c *Config) substitute() int {
 		c.LongDesc.En = r.Replace(c.LongDesc.En)
 		if !strings.Contains(c.LongDesc.En, "${") {
 			cnt -= 1
+		} else {
+			c.LongDesc.En = envReplacer.ReplaceAllStringFunc(c.LongDesc.En, func(in string) (out string) {
+				out = in
+				envName := in[2 : len(in)-1]
+				if envVal, found := os.LookupEnv(envName); found {
+					out = envVal
+				}
+				return
+			})
 		}
 	}
 
@@ -120,6 +178,15 @@ func (c *Config) substitute() int {
 		c.Project = r.Replace(c.Project)
 		if !strings.Contains(c.Project, "${") {
 			cnt -= 1
+		} else {
+			c.Project = envReplacer.ReplaceAllStringFunc(c.Project, func(in string) (out string) {
+				out = in
+				envName := in[2 : len(in)-1]
+				if envVal, found := os.LookupEnv(envName); found {
+					out = envVal
+				}
+				return
+			})
 		}
 	}
 
@@ -128,6 +195,15 @@ func (c *Config) substitute() int {
 		c.Server.Host = r.Replace(c.Server.Host)
 		if !strings.Contains(c.Server.Host, "${") {
 			cnt -= 1
+		} else {
+			c.Server.Host = envReplacer.ReplaceAllStringFunc(c.Server.Host, func(in string) (out string) {
+				out = in
+				envName := in[2 : len(in)-1]
+				if envVal, found := os.LookupEnv(envName); found {
+					out = envVal
+				}
+				return
+			})
 		}
 	}
 
@@ -136,6 +212,15 @@ func (c *Config) substitute() int {
 		c.Version = r.Replace(c.Version)
 		if !strings.Contains(c.Version, "${") {
 			cnt -= 1
+		} else {
+			c.Version = envReplacer.ReplaceAllStringFunc(c.Version, func(in string) (out string) {
+				out = in
+				envName := in[2 : len(in)-1]
+				if envVal, found := os.LookupEnv(envName); found {
+					out = envVal
+				}
+				return
+			})
 		}
 	}
 

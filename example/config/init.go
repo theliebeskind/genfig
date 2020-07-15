@@ -21,12 +21,10 @@ var Current *Config
 func init() {
 	Current, _ = Get(os.Getenv("ENV"))
 
-	// calling plugin substitutor
-	Current.Substitute()
-
-	// calling plugin update_from_env
 	if errs := Current.UpdateFromEnv(); errs != nil {
 		fmt.Println(errs)
 	}
+
+	Current.Substitute()
 
 }
