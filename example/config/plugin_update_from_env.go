@@ -212,7 +212,7 @@ func parseFloat64(s string, f *float64) (err error) {
 }
 
 func parseBool(s string, b *bool) (err error) {
-	if got, err := strconv.ParseBool(s); err != nil {
+	if got, err := strconv.ParseBool(s); err == nil {
 		*b = got
 	}
 	return
