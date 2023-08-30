@@ -7,5 +7,5 @@ require (
 	github.com/imdario/mergo v0.3.10
 	github.com/mattn/go-zglob v0.0.2
 	github.com/stretchr/testify v1.6.1
-	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776
+	gopkg.in/yaml.v3 v3.0.0
 )
